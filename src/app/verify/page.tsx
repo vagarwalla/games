@@ -3,7 +3,7 @@ import { CLUES, TOTAL_CLUES } from "@/lib/clues";
 import { ACTION_GROUPS, GRID } from "@/lib/grid";
 import { CASE_COUNT } from "@/lib/types";
 
-export const metadata = { title: "Verify — Orient Express" };
+export const metadata = { title: "Ledger — Orient Express" };
 
 export default function VerifyPage() {
   const verified = CLUES.filter((c) => c.verified).length;
@@ -12,50 +12,79 @@ export default function VerifyPage() {
   const transcribed = CLUES.filter((c) => !c.missing && c.text).length;
 
   const stats = [
-    { label: "Total clues", value: TOTAL_CLUES },
-    { label: "Transcribed", value: transcribed },
-    { label: "Verified", value: verified },
-    { label: "Uncertain", value: uncertain },
-    { label: "Missing", value: missing },
-    { label: "Grid rows", value: GRID.length },
+    { label: "Total", value: TOTAL_CLUES, color: "var(--blue)" },
+    { label: "Transcribed", value: transcribed, color: "var(--teal)" },
+    { label: "Verified", value: verified, color: "var(--green)" },
+    { label: "Uncertain", value: uncertain, color: "var(--orange)" },
+    { label: "Missing", value: missing, color: "var(--coral)" },
+    { label: "Grid rows", value: GRID.length, color: "var(--purple)" },
   ];
 
   return (
-    <main>
+    <div className="min-h-screen">
       <Banner active="verify" />
-      <div className="mx-auto flex max-w-4xl flex-col gap-8 px-4 py-6">
+
+      <main className="mx-auto flex max-w-5xl flex-col gap-10 px-3 pb-16 pt-5 sm:px-4">
         <section>
-          <h1 className="mb-3 text-lg font-semibold">Coverage</h1>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <h1
+            className="font-display text-3xl"
+            style={{ color: "var(--ink)" }}
+          >
+            The Ledger
+          </h1>
+          <p
+            className="mt-1.5 text-sm font-medium"
+            style={{ color: "var(--ink-soft)" }}
+          >
+            Transcription coverage, the full clue-numbers grid, and every booklet
+            entry — for checking the data against the printed game.
+          </p>
+
+          <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-6">
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="rounded-xl border border-black/15 p-3 dark:border-white/20"
+                className="rounded-lg p-3"
+                style={{
+                  background: "var(--surface)",
+                  border: "3px solid var(--ink)",
+                  boxShadow: "var(--shadow-sm)",
+                }}
               >
-                <div className="text-2xl font-semibold">{s.value}</div>
-                <div className="text-xs opacity-70">{s.label}</div>
+                <div
+                  className="font-display text-3xl leading-none"
+                  style={{ color: s.color }}
+                >
+                  {s.value}
+                </div>
+                <div className="kicker mt-1.5">{s.label}</div>
               </div>
             ))}
           </div>
         </section>
 
         <section>
-          <h2 className="mb-3 text-lg font-semibold">
-            Clue-numbers grid (action × target × case)
+          <h2 className="font-display text-xl" style={{ color: "var(--ink)" }}>
+            Clue-numbers grid
           </h2>
-          <div className="overflow-x-auto">
+          <p className="kicker mt-1">action × target × case</p>
+          <div
+            className="mt-3 overflow-x-auto rounded-lg"
+            style={{ border: "3px solid var(--ink)" }}
+          >
             <table className="w-full border-collapse text-xs">
               <thead>
-                <tr>
-                  <th className="border-b border-black/15 p-1.5 text-left dark:border-white/20">
-                    Action / Target
+                <tr style={{ background: "var(--teal)", color: "#fffdf6" }}>
+                  <th className="font-label p-2 text-left text-[0.6rem] uppercase">
+                    Target
                   </th>
                   {Array.from({ length: CASE_COUNT }, (_, i) => i + 1).map((c) => (
                     <th
                       key={c}
-                      className="border-b border-black/15 p-1.5 dark:border-white/20"
+                      className="font-display p-2 text-center"
+                      style={{ minWidth: "2.2rem" }}
                     >
-                      C{c}
+                      {c}
                     </th>
                   ))}
                 </tr>
@@ -68,14 +97,27 @@ export default function VerifyPage() {
                     );
                     return (
                       <tr key={`${g.kind}-${t.id}`}>
-                        <td className="border-b border-black/5 p-1.5 dark:border-white/10">
-                          <span className="opacity-60">{g.label}:</span> {t.label}
+                        <td
+                          className="whitespace-nowrap p-2 font-semibold"
+                          style={{
+                            borderTop: "2px solid var(--ink)",
+                            color: "var(--ink)",
+                          }}
+                        >
+                          <span className="kicker mr-1.5">{g.label}</span>
+                          {t.label}
                         </td>
                         {(row?.numbers ?? Array(CASE_COUNT).fill(null)).map(
                           (n, i) => (
                             <td
                               key={i}
-                              className="border-b border-black/5 p-1.5 text-center dark:border-white/10"
+                              className="p-2 text-center font-semibold tabular-nums"
+                              style={{
+                                borderTop: "2px solid var(--ink)",
+                                borderLeft: "1px solid var(--ink)",
+                                color:
+                                  n == null ? "var(--ink-soft)" : "var(--ink)",
+                              }}
                             >
                               {n ?? "—"}
                             </td>
@@ -91,27 +133,64 @@ export default function VerifyPage() {
         </section>
 
         <section>
-          <h2 className="mb-3 text-lg font-semibold">
-            All clues ({TOTAL_CLUES})
+          <h2 className="font-display text-xl" style={{ color: "var(--ink)" }}>
+            The booklet
           </h2>
-          <ul className="flex flex-col gap-1.5">
-            {CLUES.map((c) => (
-              <li
-                key={c.n}
-                className="rounded-lg border border-black/10 p-2 text-sm dark:border-white/15"
-              >
-                <span className="mr-2 font-semibold">#{c.n}</span>
-                {c.verified && <span className="mr-1">✓</span>}
-                {c.uncertain && <span className="mr-1">⚠</span>}
-                {c.missing && <span className="mr-1 opacity-60">… pending</span>}
-                <span className={c.missing || !c.text ? "italic opacity-60" : ""}>
-                  {c.missing || !c.text ? "Not transcribed yet." : c.text}
-                </span>
-              </li>
-            ))}
+          <p className="kicker mt-1">all {TOTAL_CLUES} clues</p>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {CLUES.map((c) => {
+              const pending = c.missing || !c.text;
+              return (
+                <li
+                  key={c.n}
+                  className="flex gap-2.5 rounded-lg p-2.5 text-sm"
+                  style={{
+                    background: "var(--surface)",
+                    border: "2.5px solid var(--ink)",
+                  }}
+                >
+                  <span
+                    className="font-display shrink-0 tabular-nums"
+                    style={{ color: "var(--blue)", minWidth: "2.6rem" }}
+                  >
+                    №{c.n}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    {c.verified && <Badge color="var(--green)">✓</Badge>}
+                    {c.uncertain && <Badge color="var(--orange)">⚠</Badge>}
+                    {c.missing && <Badge color="var(--coral)">pending</Badge>}
+                    <span
+                      style={{
+                        color: pending ? "var(--ink-soft)" : "var(--ink)",
+                        fontStyle: pending ? "italic" : "normal",
+                      }}
+                    >
+                      {pending ? "Not transcribed yet." : c.text}
+                    </span>
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </section>
-      </div>
-    </main>
+      </main>
+    </div>
+  );
+}
+
+function Badge({
+  children,
+  color,
+}: {
+  children: React.ReactNode;
+  color: string;
+}) {
+  return (
+    <span
+      className="font-label mr-1.5 rounded px-1.5 py-0.5 text-[0.5rem] uppercase"
+      style={{ background: color, color: "#fffdf6", border: "1.5px solid var(--ink)" }}
+    >
+      {children}
+    </span>
   );
 }

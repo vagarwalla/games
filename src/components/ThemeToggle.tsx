@@ -9,12 +9,20 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      aria-label="Toggle dark mode"
+      aria-label={isDark ? "Switch to day" : "Switch to night"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="rounded-full border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
+      className="focusable press grid h-8 w-8 place-items-center rounded-md text-sm"
+      style={{
+        background: "var(--surface)",
+        color: "var(--ink)",
+        border: "2.5px solid var(--ink)",
+        boxShadow: "var(--shadow-sm)",
+      }}
       suppressHydrationWarning
     >
-      <span suppressHydrationWarning>{isDark ? "☀️ Light" : "🌙 Dark"}</span>
+      <span suppressHydrationWarning aria-hidden="true">
+        {isDark ? "☀" : "☾"}
+      </span>
     </button>
   );
 }

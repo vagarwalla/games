@@ -1,29 +1,184 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Orient Express — styled after the original 1980s Jumbo box art:
+ * flat saturated colour blocks, thick black outlines, hard offset shadows,
+ * chunky cream art-deco display type. Bold, comic, high-contrast, mobile-first.
+ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  /* surfaces */
+  --paper: #f4e9cb; /* warm cream (the ceiling / logo) */
+  --surface: #fffdf6;
+  --ink: #181410; /* outline + text */
+  --ink-soft: #4a423a;
+
+  /* the box palette */
+  --teal: #1c8b97;
+  --teal-deep: #0e5e69;
+  --orange: #ee882c;
+  --coral: #e0526a;
+  --yellow: #f4c43a;
+  --green: #57a23d;
+  --red: #c5402f;
+  --blue: #2f6fb2;
+  --purple: #6a4c9c;
+
+  --shadow: 4px 4px 0 var(--ink);
+  --shadow-sm: 3px 3px 0 var(--ink);
+  --radius: 12px;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --paper: #0c1b1f; /* deep petrol night */
+  --surface: #112a30;
+  --ink: #f4e9cb; /* cream becomes the outline/text on dark */
+  --ink-soft: #c8bda0;
+
+  --teal: #2aa6b3;
+  --teal-deep: #0e5e69;
+  --orange: #f2982f;
+  --coral: #ec6178;
+  --yellow: #f6cd4e;
+  --green: #6cbb4d;
+  --red: #db5142;
+  --blue: #4d8bd0;
+  --purple: #8a6bc0;
+
+  --shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+  --shadow-sm: 3px 3px 0 rgba(0, 0, 0, 0.6);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-teal: var(--teal);
+  --color-orange: var(--orange);
+  --color-coral: var(--coral);
+  --color-yellow: var(--yellow);
+  --color-green: var(--green);
+  --color-blue: var(--blue);
+  --font-display: var(--ff-display), "Paytone One", system-ui, sans-serif;
+  --font-label: var(--ff-label), "Bungee", system-ui, sans-serif;
+  --font-body: var(--ff-body), "DM Sans", system-ui, sans-serif;
+}
+
+html {
+  color-scheme: light dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- comic primitives ---------------------------------------------- */
+
+.panel {
+  background: var(--surface);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.outline {
+  border: 3px solid var(--ink);
+  border-radius: var(--radius);
+}
+
+.kicker {
+  font-family: var(--font-label);
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* a cream "label bar" like the tops of the game's cards */
+.label-bar {
+  background: var(--paper);
+  border-bottom: 3px solid var(--ink);
+  font-family: var(--font-label);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* telegram morse rule: dash · dot · dash repeated */
+.morse {
+  height: 3px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--ink) 0 16px,
+    transparent 16px 23px,
+    var(--ink) 23px 26px,
+    transparent 26px 33px
+  );
+}
+
+/* a button that physically "presses": shadow collapses + nudges down-right */
+.press {
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+.press:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+.focusable:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* ---- motion --------------------------------------------------------- */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) rotate(-2deg) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(-1deg) scale(1);
+  }
+}
+
+.animate-rise {
+  animation: rise-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-pop {
+  animation: pop-in 0.36s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-pop {
+    animation: none;
+  }
+  .press {
+    transition: none;
+  }
 }

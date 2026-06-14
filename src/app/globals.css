@@ -105,6 +105,27 @@ body {
   color: var(--ink-soft);
 }
 
+/* a cream "label bar" like the tops of the game's cards */
+.label-bar {
+  background: var(--paper);
+  border-bottom: 3px solid var(--ink);
+  font-family: var(--font-label);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* telegram morse rule: dash · dot · dash repeated */
+.morse {
+  height: 3px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--ink) 0 16px,
+    transparent 16px 23px,
+    var(--ink) 23px 26px,
+    transparent 26px 33px
+  );
+}
+
 /* a button that physically "presses": shadow collapses + nudges down-right */
 .press {
   transition:

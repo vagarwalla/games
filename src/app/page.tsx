@@ -73,7 +73,11 @@ export default function Home() {
           <aside className="lg:sticky lg:top-20 lg:self-start">
             <h2 className="kicker mb-2">The clue</h2>
             {targetId != null ? (
-              <ClueCard clueNumber={clueNumber} />
+              <ClueCard
+                clueNumber={clueNumber}
+                kind={kind}
+                actionLabel={group.label}
+              />
             ) : (
               <div
                 className="rounded-xl p-5"

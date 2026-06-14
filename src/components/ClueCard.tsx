@@ -1,6 +1,15 @@
 import { clueByNumber } from "@/lib/clues";
+import type { ActionKind } from "@/lib/types";
 
-export function ClueCard({ clueNumber }: { clueNumber: number | null }) {
+export function ClueCard({
+  clueNumber,
+  kind,
+  actionLabel,
+}: {
+  clueNumber: number | null;
+  kind: ActionKind;
+  actionLabel: string;
+}) {
   if (clueNumber == null) {
     return (
       <div
@@ -19,64 +28,87 @@ export function ClueCard({ clueNumber }: { clueNumber: number | null }) {
 
   const clue = clueByNumber(clueNumber);
   const pending = !clue || clue.missing || !clue.text;
+  const isTelegram = kind === "telegram";
 
   return (
     <article
       key={clueNumber}
       className="animate-pop overflow-hidden"
       style={{
-        background: "var(--blue)",
+        background: "var(--paper)",
         border: "3px solid var(--ink)",
         borderRadius: "var(--radius)",
         boxShadow: "var(--shadow)",
       }}
     >
-      {/* booklet "cover" header */}
-      <div className="px-4 pt-3.5 pb-3" style={{ color: "#fffdf6" }}>
-        <p
-          className="font-display text-sm leading-none tracking-wide"
-          style={{ textShadow: "2px 2px 0 var(--ink)" }}
+      {/* cream label bar with the "T" stamp + title + circle number */}
+      <div className="label-bar flex items-center gap-2.5 px-3 py-2">
+        <Stamp />
+        <span className="flex-1 text-xs leading-none sm:text-sm">
+          {isTelegram ? "Telegram" : actionLabel}
+        </span>
+        <span
+          className="font-display grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm"
+          style={{
+            background: "var(--ink)",
+            color: "var(--paper)",
+          }}
         >
-          ORIENT EXPRESS
-        </p>
-        <p className="font-label mt-1.5 text-[0.6rem] uppercase opacity-90">
-          Clue Booklet
-        </p>
+          {clueNumber}
+        </span>
       </div>
 
-      {/* inner "page" */}
-      <div
-        className="m-2 mt-0 rounded-lg p-4"
-        style={{
-          background: "var(--surface)",
-          border: "3px solid var(--ink)",
-        }}
-      >
-        <div className="mb-2 flex items-center justify-between gap-3">
-          <span
-            className="font-display text-2xl leading-none"
-            style={{ color: "var(--ink)" }}
-          >
-            № {clueNumber}
-          </span>
-          <span className="flex flex-wrap justify-end gap-1.5">
-            {clue?.verified && <Tag color="var(--green)">✓ verified</Tag>}
-            {clue?.uncertain && <Tag color="var(--orange)">⚠ check</Tag>}
-            {clue?.missing && <Tag color="var(--coral)">pending</Tag>}
-          </span>
-        </div>
+      {/* telegram body: morse rules top & bottom */}
+      <div className="px-4 py-4">
+        <div className="morse mb-3" aria-hidden="true" />
 
         {pending ? (
-          <p className="text-sm font-medium italic" style={{ color: "var(--ink-soft)" }}>
-            This clue has not been transcribed from the booklet yet.
+          <p
+            className="text-sm font-semibold italic"
+            style={{ color: "var(--ink-soft)" }}
+          >
+            This clue has not been transcribed from the booklet yet.{" "}
+            <span className="font-display not-italic">STOP</span>
           </p>
         ) : (
-          <p className="text-[0.95rem] leading-relaxed" style={{ color: "var(--ink)" }}>
+          <p
+            className="text-[0.98rem] font-medium leading-relaxed"
+            style={{ color: "var(--ink)" }}
+          >
             {clue.text}
           </p>
         )}
+
+        <div className="morse mt-3" aria-hidden="true" />
+
+        {(clue?.verified || clue?.uncertain || clue?.missing) && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {clue?.verified && <Tag color="var(--green)">✓ verified</Tag>}
+            {clue?.uncertain && <Tag color="var(--orange)">⚠ check</Tag>}
+            {clue?.missing && <Tag color="var(--coral)">pending</Tag>}
+          </div>
+        )}
       </div>
     </article>
+  );
+}
+
+/* the gold "T" telegram stamp on a blue square */
+function Stamp() {
+  return (
+    <span
+      aria-hidden="true"
+      className="font-display grid h-8 w-8 shrink-0 place-items-center text-lg leading-none"
+      style={{
+        background: "var(--blue)",
+        color: "var(--yellow)",
+        border: "2.5px solid var(--ink)",
+        borderRadius: "4px",
+        textShadow: "1px 1px 0 var(--ink)",
+      }}
+    >
+      T
+    </span>
   );
 }
 
@@ -90,11 +122,7 @@ function Tag({
   return (
     <span
       className="font-label rounded-full px-2 py-0.5 text-[0.55rem] uppercase"
-      style={{
-        background: color,
-        color: "#fffdf6",
-        border: "2px solid var(--ink)",
-      }}
+      style={{ background: color, color: "#fffdf6", border: "2px solid var(--ink)" }}
     >
       {children}
     </span>

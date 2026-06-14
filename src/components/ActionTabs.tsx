@@ -3,10 +3,17 @@
 import { ACTION_GROUPS } from "@/lib/grid";
 import type { ActionKind } from "@/lib/types";
 
+export const ACTION_COLOR: Record<ActionKind, string> = {
+  "question-suspect": "var(--coral)",
+  "question-crew": "var(--orange)",
+  "search-area": "var(--green)",
+  telegram: "var(--blue)",
+};
+
 const GLYPH: Record<ActionKind, string> = {
-  "question-suspect": "✦",
-  "question-crew": "⚑",
-  "search-area": "✜",
+  "question-suspect": "🕵",
+  "question-crew": "🎩",
+  "search-area": "🔍",
   telegram: "✉",
 };
 
@@ -19,35 +26,32 @@ export function ActionTabs({
 }) {
   return (
     <section>
-      <h2 className="label-kicker mb-2">What happened?</h2>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <h2 className="kicker mb-2">What happened?</h2>
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         {ACTION_GROUPS.map((g) => {
           const selected = value === g.kind;
+          const color = ACTION_COLOR[g.kind];
           return (
             <button
               key={g.kind}
               type="button"
               onClick={() => onChange(g.kind)}
               aria-pressed={selected}
-              className="focusable flex flex-col items-start gap-1 rounded-md px-3 py-2.5 text-left transition-colors"
+              className="focusable press flex flex-col gap-1.5 rounded-lg p-2.5 text-left"
               style={{
-                background: selected ? "var(--amber-soft)" : "var(--paper-2)",
-                border: `1px solid ${selected ? "var(--amber)" : "var(--line)"}`,
-                boxShadow: selected ? "inset 0 0 0 1px var(--amber)" : "none",
+                background: selected ? color : "var(--surface)",
+                color: selected ? "#fffdf6" : "var(--ink)",
+                border: "3px solid var(--ink)",
+                boxShadow: selected ? "var(--shadow)" : "var(--shadow-sm)",
               }}
             >
-              <span
-                aria-hidden="true"
-                className="text-base"
-                style={{ color: selected ? "var(--amber)" : "var(--ink-muted)" }}
-              >
+              <span aria-hidden="true" className="text-xl leading-none">
                 {GLYPH[g.kind]}
               </span>
               <span
-                className="text-sm leading-tight"
+                className="font-label text-[0.62rem] uppercase leading-tight"
                 style={{
-                  fontWeight: selected ? 600 : 500,
-                  color: selected ? "var(--ink)" : "var(--ink-muted)",
+                  textShadow: selected ? "1.5px 1.5px 0 var(--ink)" : "none",
                 }}
               >
                 {g.label}

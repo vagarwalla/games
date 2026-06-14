@@ -4,36 +4,29 @@ import { ThemeToggle } from "./ThemeToggle";
 export function Banner({ active }: { active?: "home" | "verify" }) {
   return (
     <header
-      className="sticky top-0 z-20 backdrop-blur-sm"
+      className="sticky top-0 z-30"
       style={{
-        background: "color-mix(in srgb, var(--paper) 88%, transparent)",
-        borderBottom: "1px solid var(--line)",
+        background: "var(--teal)",
+        borderBottom: "3px solid var(--ink)",
       }}
     >
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
-        <div className="flex items-baseline gap-3">
-          <Link
-            href="/"
-            className="focusable font-display text-lg italic leading-none tracking-tight"
-            style={{ color: "var(--amber)" }}
-          >
-            Orient&nbsp;Express
-          </Link>
-          <span className="label-kicker hidden sm:inline">Case File</span>
-        </div>
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-3 py-2.5 sm:px-4">
+        <Link
+          href="/"
+          className="focusable font-display text-base leading-none tracking-wide sm:text-lg"
+          style={{ color: "var(--paper)", textShadow: "2px 2px 0 var(--ink)" }}
+        >
+          ORIENT&nbsp;EXPRESS
+        </Link>
 
         <div className="flex items-center gap-1.5">
-          <nav className="mr-1 flex items-center gap-1 text-sm">
+          <nav className="flex items-center gap-1.5">
             <NavLink href="/" label="Lookup" active={active === "home"} />
-            <span aria-hidden="true" style={{ color: "var(--line)" }}>
-              ·
-            </span>
             <NavLink href="/verify" label="Ledger" active={active === "verify"} />
           </nav>
           <ThemeToggle />
         </div>
       </div>
-      <div className="rule-brass" />
     </header>
   );
 }
@@ -50,13 +43,12 @@ function NavLink({
   return (
     <Link
       href={href}
-      className="focusable rounded px-2 py-1 transition-colors"
+      className="focusable press rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-wide sm:text-sm"
       style={{
-        color: active ? "var(--ink)" : "var(--ink-muted)",
-        fontWeight: active ? 600 : 400,
-        textDecoration: active ? "underline" : "none",
-        textDecorationColor: "var(--amber)",
-        textUnderlineOffset: "4px",
+        background: active ? "var(--yellow)" : "var(--surface)",
+        color: "var(--ink)",
+        border: "2.5px solid var(--ink)",
+        boxShadow: "var(--shadow-sm)",
       }}
     >
       {label}

@@ -31,91 +31,75 @@ export default function Home() {
     <div className="min-h-screen">
       <Banner active="home" />
 
-      <main className="mx-auto max-w-5xl px-4 pb-20">
-        {/* masthead */}
-        <section className="border-b py-8" style={{ borderColor: "var(--line)" }}>
-          <p className="label-kicker">Just Games · Compagnie Internationale</p>
+      <main className="mx-auto max-w-5xl px-3 pb-16 sm:px-4">
+        {/* marquee hero */}
+        <section
+          className="mt-4 rounded-2xl px-4 py-6 text-center sm:py-8"
+          style={{
+            background: "var(--teal)",
+            border: "3px solid var(--ink)",
+            boxShadow: "var(--shadow)",
+          }}
+        >
           <h1
-            className="mt-1 font-display text-4xl italic leading-[1.05] sm:text-5xl"
-            style={{ color: "var(--ink)" }}
+            className="font-display leading-[0.95] tracking-wide"
+            style={{ color: "var(--paper)", textShadow: "3px 3px 0 var(--ink)" }}
           >
-            Murder on the
-            <br />
-            Orient&nbsp;Express
+            <span className="block text-4xl sm:text-6xl">ORIENT</span>
+            <span className="block text-4xl sm:text-6xl">EXPRESS</span>
           </h1>
           <p
-            className="mt-3 max-w-md text-sm"
-            style={{ color: "var(--ink-muted)" }}
+            className="mx-auto mt-3 max-w-md text-sm font-semibold"
+            style={{ color: "var(--paper)" }}
           >
-            Skip the two-step booklet shuffle. Pick the case, say what happened,
-            choose the target — the clue is pulled for you.
+            Skip the booklet shuffle. Pick the case, say what happened, choose
+            the target — the clue is pulled for you.
           </p>
         </section>
 
-        <div className="grid gap-10 py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
-          {/* left: the three taps */}
-          <div className="flex flex-col gap-8">
-            <Step n={1}>
-              <CaseSelector value={caseNumber} onChange={setCaseNumber} />
-            </Step>
-            <Step n={2}>
-              <ActionTabs value={kind} onChange={handleKind} />
-            </Step>
-            <Step n={3}>
-              <TargetList
-                groupKey={kind}
-                targets={group.targets}
-                value={targetId}
-                onChange={setTargetId}
-              />
-            </Step>
+        <div className="grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-8">
+          <div className="flex flex-col gap-6">
+            <CaseSelector value={caseNumber} onChange={setCaseNumber} />
+            <ActionTabs value={kind} onChange={handleKind} />
+            <TargetList
+              kind={kind}
+              targets={group.targets}
+              value={targetId}
+              onChange={setTargetId}
+            />
           </div>
 
-          {/* right: the result */}
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <h2 className="label-kicker mb-2">The clue</h2>
+          {/* result — sticky on desktop, inline on mobile */}
+          <aside className="lg:sticky lg:top-20 lg:self-start">
+            <h2 className="kicker mb-2">The clue</h2>
             {targetId != null ? (
               <ClueCard clueNumber={clueNumber} />
             ) : (
               <div
-                className="rounded-lg p-6 text-sm"
+                className="rounded-xl p-5"
                 style={{
-                  background: "var(--paper-2)",
-                  border: "1px dashed var(--line)",
-                  color: "var(--ink-muted)",
+                  background: "var(--surface)",
+                  border: "3px dashed var(--ink)",
                 }}
               >
-                <p className="font-display text-lg italic" style={{ color: "var(--ink)" }}>
-                  Awaiting your selection.
+                <p
+                  className="font-display text-lg"
+                  style={{ color: "var(--ink)" }}
+                >
+                  All aboard.
                 </p>
-                <p className="mt-1">
-                  Case&nbsp;
-                  <span style={{ color: "var(--amber)" }}>№ {caseNumber}</span> ·{" "}
-                  {group.label}. Choose a target to reveal the clue.
+                <p
+                  className="mt-1 text-sm font-medium"
+                  style={{ color: "var(--ink-soft)" }}
+                >
+                  Case № {caseNumber} · {group.label}. Choose a target to reveal
+                  the clue.
                 </p>
               </div>
             )}
           </aside>
         </div>
       </main>
-    </div>
-  );
-}
-
-function Step({ n, children }: { n: number; children: React.ReactNode }) {
-  return (
-    <div className="flex gap-3">
-      <span
-        aria-hidden="true"
-        className="font-type mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs"
-        style={{
-          border: "1px solid var(--line)",
-          color: "var(--ink-muted)",
-        }}
-      >
-        {n}
-      </span>
-      <div className="min-w-0 flex-1">{children}</div>
     </div>
   );
 }

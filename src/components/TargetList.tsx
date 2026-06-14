@@ -1,64 +1,57 @@
 "use client";
 
-import type { Target } from "@/lib/types";
+import type { ActionKind, Target } from "@/lib/types";
+import { ACTION_COLOR } from "./ActionTabs";
 
 export function TargetList({
   targets,
   value,
   onChange,
-  groupKey,
+  kind,
 }: {
   targets: Target[];
   value: string | null;
   onChange: (targetId: string) => void;
-  /** Changes when the action group changes, so rows re-animate. */
-  groupKey: string;
+  kind: ActionKind;
 }) {
+  const color = ACTION_COLOR[kind];
+
   return (
     <section>
-      <h2 className="label-kicker mb-2">Target</h2>
-      <ul key={groupKey} className="flex flex-col gap-1">
+      <h2 className="kicker mb-2">Who / where</h2>
+      <ul key={kind} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {targets.map((t, i) => {
           const selected = value === t.id;
           return (
             <li
               key={t.id}
               className="animate-rise"
-              style={{ animationDelay: `${Math.min(i * 28, 280)}ms` }}
+              style={{ animationDelay: `${Math.min(i * 25, 250)}ms` }}
             >
               <button
                 type="button"
                 onClick={() => onChange(t.id)}
                 aria-pressed={selected}
-                className="specimen-row focusable group flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left transition-colors"
+                className="focusable press flex w-full items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-left"
                 style={{
-                  background: selected ? "var(--amber-soft)" : "transparent",
-                  borderLeft: `3px solid ${selected ? "var(--amber)" : "transparent"}`,
+                  background: selected ? color : "var(--surface)",
+                  color: selected ? "#fffdf6" : "var(--ink)",
+                  border: "3px solid var(--ink)",
+                  boxShadow: selected ? "var(--shadow)" : "var(--shadow-sm)",
                 }}
               >
                 <span
                   aria-hidden="true"
-                  className="font-type text-xs tabular-nums"
-                  style={{ color: "var(--ink-muted)", minWidth: "1.6rem" }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span
-                  className="flex-1 text-sm"
+                  className="font-display grid h-7 w-7 shrink-0 place-items-center rounded-md text-xs"
                   style={{
-                    color: selected ? "var(--ink)" : "var(--ink)",
-                    fontWeight: selected ? 600 : 400,
+                    background: selected ? "var(--surface)" : color,
+                    color: selected ? "var(--ink)" : "#fffdf6",
+                    border: "2.5px solid var(--ink)",
                   }}
                 >
-                  {t.label}
+                  {i + 1}
                 </span>
-                <span
-                  aria-hidden="true"
-                  className="text-sm opacity-0 transition-opacity group-hover:opacity-100"
-                  style={{ color: "var(--amber)" }}
-                >
-                  ›
-                </span>
+                <span className="flex-1 text-sm font-semibold">{t.label}</span>
               </button>
             </li>
           );

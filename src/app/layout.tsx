@@ -3,9 +3,9 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
-  title: "Orient Express — Clue Lookup",
+  title: "Orient Express — Case File",
   description:
-    "Fast clue lookup for Murder on the Orient Express: pick a case, an action, and a target.",
+    "A detective's case file for Murder on the Orient Express: pick a case, an action, and a target to pull the clue.",
 };
 
 export default function RootLayout({

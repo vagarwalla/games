@@ -9,12 +9,18 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      aria-label="Toggle dark mode"
+      aria-label={isDark ? "Switch to daytime dossier" : "Switch to night train"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="rounded-full border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
+      className="focusable inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition-colors"
+      style={{ borderColor: "var(--line)", color: "var(--ink-muted)" }}
       suppressHydrationWarning
     >
-      <span suppressHydrationWarning>{isDark ? "☀️ Light" : "🌙 Dark"}</span>
+      <span suppressHydrationWarning style={{ fontFamily: "var(--font-type)" }}>
+        {isDark ? "DAY" : "NIGHT"}
+      </span>
+      <span suppressHydrationWarning aria-hidden="true">
+        {isDark ? "☼" : "☾"}
+      </span>
     </button>
   );
 }

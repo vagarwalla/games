@@ -11,6 +11,17 @@ export default function VerifyPage() {
   const missing = CLUES.filter((c) => c.missing).length;
   const transcribed = CLUES.filter((c) => !c.missing && c.text).length;
 
+  // Clue numbers reachable through the grid (action × target × case). Every
+  // booklet number not pointed at by any grid cell is "unkeyed" — it still
+  // exists in the booklet but can't be earned via question/search/telegram.
+  const keyed = new Set<number>();
+  for (const row of GRID) {
+    for (const n of row.numbers) {
+      if (n != null) keyed.add(n);
+    }
+  }
+  const unkeyed = CLUES.map((c) => c.n).filter((n) => !keyed.has(n));
+
   const stats = [
     { label: "Total", value: TOTAL_CLUES, color: "var(--blue)" },
     { label: "Transcribed", value: transcribed, color: "var(--teal)" },
@@ -18,6 +29,7 @@ export default function VerifyPage() {
     { label: "Uncertain", value: uncertain, color: "var(--orange)" },
     { label: "Missing", value: missing, color: "var(--coral)" },
     { label: "Grid rows", value: GRID.length, color: "var(--purple)" },
+    { label: "Unkeyed", value: unkeyed.length, color: "var(--yellow)" },
   ];
 
   return (
@@ -40,7 +52,7 @@ export default function VerifyPage() {
             entry — for checking the data against the printed game.
           </p>
 
-          <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-6">
+          <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-7">
             {stats.map((s) => (
               <div
                 key={s.label}
@@ -141,6 +153,39 @@ export default function VerifyPage() {
               </tbody>
             </table>
           </div>
+        </section>
+
+        <section>
+          <h2 className="font-display text-xl" style={{ color: "var(--ink)" }}>
+            Unkeyed clues
+          </h2>
+          <p className="kicker mt-1">
+            {unkeyed.length} numbers no grid cell points at
+          </p>
+          <p
+            className="mt-2 max-w-2xl text-sm font-medium"
+            style={{ color: "var(--ink-soft)" }}
+          >
+            These exist in the booklet but aren&rsquo;t reachable through
+            question, search, or telegram — likely the free clues read aloud at
+            the start of a case rather than earned through investigation.
+          </p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {unkeyed.map((n) => (
+              <li
+                key={n}
+                className="font-display rounded-lg px-2.5 py-1.5 text-sm tabular-nums"
+                style={{
+                  background: "var(--surface)",
+                  border: "2.5px solid var(--ink)",
+                  color: "var(--yellow)",
+                  boxShadow: "var(--shadow-sm)",
+                }}
+              >
+                №{n}
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section>

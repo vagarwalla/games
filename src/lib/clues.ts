@@ -22,12 +22,11 @@ export const TOTAL_CLUES = 320;
 /**
  * Clues whose transcription is shaky in the photos and needs a careful
  * double-check against the printed booklet:
- *   124 / 131 — both read as "insanity or money"; possible duplicate, the
- *               photo could not disambiguate them with confidence.
- *   305       — one word is illegible in the photo ("…pinpoint where the
- *               murder occurred").
+ *   144 — "oddly enough for someone in this profession": this/his unclear.
+ *   305 — one word is illegible in the photo ("…pinpoint where the murder
+ *         occurred").
  */
-const UNCERTAIN = new Set<number>([124, 131, 305]);
+const UNCERTAIN = new Set<number>([144, 305]);
 
 /** Booklet text for clues 1–320, in order (index 0 = clue 1). */
 const TEXT: string[] = [
@@ -154,7 +153,7 @@ const TEXT: string[] = [
   "If the murder weapon was a knife, then the Baroness and Count must both be innocent.",
   "The Actress, Baroness, Count, and Gambler all were in Spain recently. So was the victim, Don de Dondon, who was found dead in the library.",
   "If the Baroness is guilty, the motive was not revenge; the Baroness cannot pick a lock.",
-  "If the Fortuneteller is guilty, the motive was insanity or money.",
+  "If the Fortuneteller is guilty, the motive was insanity or jealousy.",
   "Both the Actress and the Baron speak Serbo-Croatian, but only the Actress will admit it.",
   "A close examination of scuff marks on the floor indicates that at least one man and one woman are guilty, and were together while committing the crime.",
   "If either the Count or Gambler is guilty, the motive was money.",

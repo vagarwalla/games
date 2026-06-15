@@ -12,7 +12,7 @@ export function Banner({ active }: { active?: "home" | "verify" }) {
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-3 py-2.5 sm:px-4">
         <Link
-          href="/"
+          href="/orient-express"
           className="focusable font-display text-base leading-none tracking-wide sm:text-lg"
           style={{ color: "var(--paper)", textShadow: "2px 2px 0 var(--ink)" }}
         >
@@ -21,8 +21,12 @@ export function Banner({ active }: { active?: "home" | "verify" }) {
 
         <div className="flex items-center gap-1.5">
           <nav className="flex items-center gap-1.5">
-            <NavLink href="/" label="Lookup" active={active === "home"} />
-            <NavLink href="/verify" label="Ledger" active={active === "verify"} />
+            <NavLink href="/orient-express" label="Lookup" active={active === "home"} />
+            <NavLink
+              href="/orient-express/verify"
+              label="Ledger"
+              active={active === "verify"}
+            />
           </nav>
           <ThemeToggle />
         </div>

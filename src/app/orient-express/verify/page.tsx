@@ -1,5 +1,5 @@
 import { Banner } from "@/components/Banner";
-import { CLUES, TOTAL_CLUES } from "@/lib/clues";
+import { CLUES, TOTAL_CLUES, clueImage, GRID_IMAGE } from "@/lib/clues";
 import { ACTION_GROUPS, GRID } from "@/lib/grid";
 import { CASE_COUNT } from "@/lib/types";
 
@@ -67,7 +67,18 @@ export default function VerifyPage() {
           <h2 className="font-display text-xl" style={{ color: "var(--ink)" }}>
             Clue-numbers grid
           </h2>
-          <p className="kicker mt-1">action × target × case</p>
+          <p className="kicker mt-1">
+            action × target × case ·{" "}
+            <a
+              href={GRID_IMAGE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+              style={{ color: "var(--blue)" }}
+            >
+              source photo ↗
+            </a>
+          </p>
           <div
             className="mt-3 overflow-x-auto rounded-lg"
             style={{ border: "3px solid var(--ink)" }}
@@ -140,6 +151,7 @@ export default function VerifyPage() {
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {CLUES.map((c) => {
               const pending = c.missing || !c.text;
+              const photo = clueImage(c.n);
               return (
                 <li
                   key={c.n}
@@ -168,6 +180,19 @@ export default function VerifyPage() {
                       {pending ? "Not transcribed yet." : c.text}
                     </span>
                   </span>
+                  {photo && (
+                    <a
+                      href={photo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={`Source photo for clue ${c.n}`}
+                      aria-label={`Source photo for clue ${c.n}`}
+                      className="shrink-0 self-start"
+                      style={{ color: "var(--blue)" }}
+                    >
+                      🔍
+                    </a>
+                  )}
                 </li>
               );
             })}

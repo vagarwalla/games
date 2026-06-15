@@ -11,10 +11,10 @@ import { CASE_COUNT } from "./types";
  *  1–10 (index 0 = Case 1 … index 9 = Case 10). The roster (suspects, crew,
  *  areas, telegram subjects) matches the printed sheet.
  *
- *  Card art lives at /public/cards/<folder>/<slug>.png. Some roster members
- *  (Entrepreneur, Heiress, Valet, Drawing Room Area, Smoking Lounge Area) have
- *  no card art in the box set; those targets render as a text label instead
- *  (see TargetList) and carry `art: false`.
+ *  Card art lives at /public/cards/<folder>/<slug>.png. Targets with `art:
+ *  true` show that image; any with `art: false` fall back to a text label
+ *  (see TargetList). The telegram-tab Entrepreneur/Heiress have no telegram
+ *  art and remain `art: false`.
  * ============================================================================
  */
 
@@ -51,10 +51,10 @@ const GROUPS: GroupDef[] = [
       { label: "Baroness", slug: "baroness", art: true, numbers: [71, 314, 238, 143, 114, 51, 138, 280, 88, 43] },
       { label: "Count", slug: "count", art: true, numbers: [28, 291, 174, 10, 262, 135, 77, 7, 154, 110] },
       { label: "Diplomat", slug: "diplomat", art: true, numbers: [201, 121, 45, 252, 94, 298, 214, 246, 213, 168] },
-      { label: "Entrepreneur", slug: "entrepreneur", art: false, numbers: [112, 148, 108, 62, 169, 241, 3, 64, 260, 27] },
+      { label: "Entrepreneur", slug: "entrepreneur", art: true, numbers: [112, 148, 108, 62, 169, 241, 3, 64, 260, 27] },
       { label: "Fortuneteller", slug: "fortune-teller", art: true, numbers: [52, 283, 211, 111, 229, 36, 166, 170, 69, 92] },
       { label: "Gambler", slug: "gambler", art: true, numbers: [167, 14, 295, 84, 288, 186, 98, 313, 242, 209] },
-      { label: "Heiress", slug: "heiress", art: false, numbers: [297, 222, 22, 273, 66, 305, 259, 53, 287, 134] },
+      { label: "Heiress", slug: "heiress", art: true, numbers: [297, 222, 22, 273, 66, 305, 259, 53, 287, 134] },
     ],
   },
   {
@@ -67,7 +67,7 @@ const GROUPS: GroupDef[] = [
       { label: "Cook", slug: "cook", art: true, numbers: [254, 235, 224, 240, 304, 118, 243, 91, 196, 236] },
       { label: "Doctor", slug: "doctor", art: true, numbers: [93, 199, 76, 29, 203, 155, 318, 30, 306, 58] },
       { label: "Porter", slug: "porter", art: true, numbers: [188, 101, 303, 172, 80, 319, 104, 207, 95, 178] },
-      { label: "Valet", slug: "valet", art: false, numbers: [61, 268, 257, 293, 149, 219, 151, 320, 271, 35] },
+      { label: "Valet", slug: "valet", art: true, numbers: [61, 268, 257, 293, 149, 219, 151, 320, 271, 35] },
       { label: "Waiter", slug: "waiter", art: true, numbers: [277, 182, 278, 120, 279, 72, 307, 136, 312, 227] },
     ],
   },
@@ -77,11 +77,11 @@ const GROUPS: GroupDef[] = [
     folder: "compartments",
     targets: [
       { label: "Dining Area", slug: "dining-room", art: true, numbers: [82, 191, 244, 309, 31, 255, 128, 106, 282, 198] },
-      { label: "Drawing Room Area", slug: "drawing-room", art: false, numbers: [146, 87, 13, 44, 185, 173, 285, 258, 59, 6] },
+      { label: "Drawing Room Area", slug: "drawing-room", art: true, numbers: [146, 87, 13, 44, 185, 173, 285, 258, 59, 6] },
       { label: "First Class", slug: "first-class", art: true, numbers: [290, 23, 163, 164, 315, 206, 89, 193, 180, 81] },
       { label: "Kitchen Area", slug: "kitchen", art: true, numbers: [212, 74, 204, 228, 54, 65, 21, 85, 225, 249] },
       { label: "Second Class", slug: "second-class", art: true, numbers: [38, 129, 269, 103, 251, 311, 223, 294, 253, 126] },
-      { label: "Smoking Lounge Area", slug: "smoking-lounge", art: false, numbers: [266, 247, 115, 302, 160, 86, 316, 156, 46, 161] },
+      { label: "Smoking Lounge Area", slug: "smoking-lounge", art: true, numbers: [266, 247, 115, 302, 160, 86, 316, 156, 46, 161] },
     ],
   },
   {

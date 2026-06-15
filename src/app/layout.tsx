@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Alfa_Slab_One, Bungee, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
@@ -27,6 +27,12 @@ export const metadata: Metadata = {
   title: "Orient Express — Clue Lookup",
   description:
     "A fast clue lookup for Murder on the Orient Express: pick a case, an action, and a target to pull the clue.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

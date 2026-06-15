@@ -45,8 +45,19 @@ export default function Home() {
             <ActionTabs value={kind} onChange={handleKind} />
           </div>
 
-          {/* the clue */}
-          <aside className="sticky top-14 z-20 self-start lg:top-20 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          {/*
+           * The clue. On mobile it's hidden until a target is chosen so the
+           * empty placeholder doesn't push the targets below the fold; once
+           * selected it pins below the banner. On desktop it's always the
+           * sticky right sidebar (placeholder included).
+           */}
+          <aside
+            className={`self-start lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:block lg:sticky lg:top-20 ${
+              targetId != null
+                ? "sticky top-14 z-20"
+                : "hidden"
+            }`}
+          >
             <div className="mb-2 flex items-center justify-between gap-2">
               <h2 className="kicker">The clue</h2>
               {targetId != null && (

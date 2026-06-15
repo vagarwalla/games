@@ -21,68 +21,74 @@ import { CASE_COUNT } from "./types";
  * ============================================================================
  */
 
-/** Build a target list of `n` items with auto ids like `q-suspect-1`. */
-function mkTargets(prefix: string, labels: string[]) {
-  return labels.map((label, i) => ({ id: `${prefix}-${i + 1}`, label }));
+/**
+ * Build a target list from [label, slug] pairs. The slug picks the card art in
+ * `/public/cards/<folder>/<slug>.png` and also forms the stable id.
+ */
+function mkTargets(folder: string, items: [label: string, slug: string][]) {
+  return items.map(([label, slug]) => ({
+    id: `${folder}-${slug}`,
+    label,
+    image: `/cards/${folder}/${slug}.png`,
+  }));
 }
 
-// NOTE: target labels below are taken from the box-art card photos to make the
-// UI feel authentic. The exact roster, spelling, and order are UNVERIFIED and
-// the per-case grid numbers are still generated placeholders (see banner above).
+// NOTE: the roster + card art are taken from the shared box-art card images to
+// make the UI feel authentic. The exact roster and the per-case grid numbers
+// are still UNVERIFIED placeholders (see banner above).
 export const ACTION_GROUPS: ActionGroup[] = [
   {
     kind: "question-suspect",
     label: "Question Suspect",
-    targets: mkTargets("suspect", [
-      "Gambler",
-      "Diplomat",
-      "Count",
-      "Countess",
-      "Colonel",
-      "Actress",
-      "Baron",
-      "Doctor",
+    targets: mkTargets("suspects", [
+      ["Actress", "actress"],
+      ["Ballerina", "ballerina"],
+      ["Baroness", "baroness"],
+      ["Colonel", "colonel"],
+      ["Count", "count"],
+      ["Diplomat", "diplomat"],
+      ["Fortune-Teller", "fortune-teller"],
+      ["Gambler", "gambler"],
     ]),
   },
   {
     kind: "question-crew",
     label: "Question Crew",
-    targets: mkTargets("crew", [
-      "Conductor",
-      "Porter",
-      "Cook",
-      "Waiter",
-      "Engineer",
-      "Steward",
-      "Guard",
-      "Maid",
+    targets: mkTargets("staff", [
+      ["Chief Guard", "chief-guard"],
+      ["Conductor", "conductor"],
+      ["Cook", "cook"],
+      ["Doctor", "doctor"],
+      ["Porter", "porter"],
+      ["Steward", "steward"],
+      ["Waiter", "waiter"],
     ]),
   },
   {
     kind: "search-area",
     label: "Search Area",
-    targets: mkTargets("area", [
-      "Saloon",
-      "Dining Room",
-      "Kitchen",
-      "Library",
-      "First Class",
-      "Second Class",
-      "Sleeper Car",
-      "Luggage Van",
+    targets: mkTargets("compartments", [
+      ["Dining Room", "dining-room"],
+      ["First Class", "first-class"],
+      ["Kitchen", "kitchen"],
+      ["Library", "library"],
+      ["Saloon", "saloon"],
+      ["Second Class", "second-class"],
     ]),
   },
   {
     kind: "telegram",
     label: "Telegram",
-    targets: mkTargets("telegram", [
-      "Telegram: Gambler",
-      "Telegram: Diplomat",
-      "Telegram: Count",
-      "Telegram: Countess",
-      "Telegram: Colonel",
-      "Telegram: Actress",
-      "Telegram: Baron",
+    targets: mkTargets("telegrams", [
+      ["Actress", "actress"],
+      ["Ballerina", "ballerina"],
+      ["Baroness", "baroness"],
+      ["Colonel", "colonel"],
+      ["Count", "count"],
+      ["Diplomat", "diplomat"],
+      ["Fortune-Teller", "fortune-teller"],
+      ["Gambler", "gambler"],
+      ["Victim", "victim"],
     ]),
   },
 ];

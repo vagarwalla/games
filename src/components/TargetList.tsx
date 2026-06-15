@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { ActionKind, Target } from "@/lib/types";
 import { ACTION_COLOR } from "./ActionTabs";
 
@@ -19,7 +20,10 @@ export function TargetList({
   return (
     <section>
       <h2 className="kicker mb-2">Who / where</h2>
-      <ul key={kind} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <ul
+        key={kind}
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+      >
         {targets.map((t, i) => {
           const selected = value === t.id;
           return (
@@ -32,26 +36,35 @@ export function TargetList({
                 type="button"
                 onClick={() => onChange(t.id)}
                 aria-pressed={selected}
-                className="focusable press flex w-full items-center gap-2.5 rounded-lg py-2.5 pl-2.5 pr-3 text-left"
+                aria-label={t.label}
+                title={t.label}
+                className="focusable press relative block w-full overflow-hidden rounded-lg"
                 style={{
-                  background: selected ? color : "var(--surface)",
-                  color: selected ? "#fffdf6" : "var(--ink)",
+                  aspectRatio: "591 / 864",
                   border: "3px solid var(--ink)",
-                  boxShadow: selected ? "var(--shadow)" : "var(--shadow-sm)",
+                  borderRadius: "var(--radius)",
+                  background: "var(--surface)",
+                  boxShadow: selected
+                    ? `0 0 0 4px ${color}, var(--shadow)`
+                    : "var(--shadow-sm)",
                 }}
               >
-                <span
-                  aria-hidden="true"
-                  className="font-display grid h-7 w-7 shrink-0 place-items-center rounded-md text-xs"
-                  style={{
-                    background: selected ? "var(--surface)" : color,
-                    color: selected ? "var(--ink)" : "#fffdf6",
-                    border: "2.5px solid var(--ink)",
-                  }}
-                >
-                  {i + 1}
-                </span>
-                <span className="flex-1 text-sm font-semibold">{t.label}</span>
+                {t.image ? (
+                  <Image
+                    src={t.image}
+                    alt={t.label}
+                    fill
+                    sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 160px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <span
+                    className="font-display grid h-full w-full place-items-center text-2xl"
+                    style={{ color: "var(--ink)" }}
+                  >
+                    {t.label}
+                  </span>
+                )}
               </button>
             </li>
           );

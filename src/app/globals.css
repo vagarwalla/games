@@ -67,7 +67,7 @@
   --color-yellow: var(--yellow);
   --color-green: var(--green);
   --color-blue: var(--blue);
-  --font-display: var(--ff-display), "Paytone One", system-ui, sans-serif;
+  --font-display: var(--ff-display), "Alfa Slab One", Georgia, serif;
   --font-label: var(--ff-label), "Bungee", system-ui, sans-serif;
   --font-body: var(--ff-body), "DM Sans", system-ui, sans-serif;
 }
@@ -112,6 +112,26 @@ body {
   font-family: var(--font-label);
   text-transform: uppercase;
   color: var(--ink);
+}
+
+/* perforated tear strip along a telegram form's top edge */
+.perf {
+  height: 10px;
+  background-color: var(--ink);
+  -webkit-mask-image: radial-gradient(
+    circle 5px at 9px bottom,
+    transparent 4px,
+    #000 4.5px
+  );
+  mask-image: radial-gradient(
+    circle 5px at 9px bottom,
+    transparent 4px,
+    #000 4.5px
+  );
+  -webkit-mask-size: 18px 100%;
+  mask-size: 18px 100%;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
 }
 
 /* telegram morse rule: dash · dot · dash repeated */

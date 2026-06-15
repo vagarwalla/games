@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Paytone_One, Bungee, DM_Sans } from "next/font/google";
+import { Alfa_Slab_One, Bungee, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 
-const display = Paytone_One({
+const display = Alfa_Slab_One({
   weight: "400",
   subsets: ["latin"],
   variable: "--ff-display",

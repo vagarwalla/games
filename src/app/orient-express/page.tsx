@@ -27,6 +27,13 @@ export default function Home() {
     setTargetId(null);
   }
 
+  function scrollToTop() {
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  }
+
   return (
     <div className="min-h-screen">
       <Banner active="home" />
@@ -61,20 +68,37 @@ export default function Home() {
             <div className="mb-2 flex items-center justify-between gap-2">
               <h2 className="kicker">The clue</h2>
               {targetId != null && (
-                <button
-                  type="button"
-                  onClick={() => setTargetId(null)}
-                  aria-label="Close clue and return to the targets"
-                  className="focusable press font-label rounded-md px-2 py-1 text-[0.6rem] uppercase leading-none"
-                  style={{
-                    background: "var(--surface)",
-                    color: "var(--ink)",
-                    border: "2.5px solid var(--ink)",
+                <div className="flex items-center gap-1.5">
+                  {/* mobile-only: jump back up to the case/action controls */}
+                  <button
+                    type="button"
+                    onClick={scrollToTop}
+                    aria-label="Jump back to the top"
+                    className="focusable press font-label rounded-md px-2 py-1 text-[0.6rem] uppercase leading-none lg:hidden"
+                    style={{
+                      background: "var(--surface)",
+                      color: "var(--ink)",
+                      border: "2.5px solid var(--ink)",
+                      boxShadow: "var(--shadow-sm)",
+                    }}
+                  >
+                    ↑ Top
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTargetId(null)}
+                    aria-label="Close clue and return to the targets"
+                    className="focusable press font-label rounded-md px-2 py-1 text-[0.6rem] uppercase leading-none"
+                    style={{
+                      background: "var(--surface)",
+                      color: "var(--ink)",
+                      border: "2.5px solid var(--ink)",
                     boxShadow: "var(--shadow-sm)",
                   }}
-                >
-                  ✕ Close
-                </button>
+                  >
+                    ✕ Close
+                  </button>
+                </div>
               )}
             </div>
             {targetId != null ? (

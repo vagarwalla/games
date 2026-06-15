@@ -7,22 +7,22 @@
  */
 
 :root {
-  /* surfaces */
-  --paper: #f4e9cb; /* warm cream (the ceiling / logo) */
-  --surface: #fffdf6;
-  --ink: #181410; /* outline + text */
+  /* surfaces — sampled from the cards' cream label bars */
+  --paper: #ede2c4; /* warm aged cream (the card label strips) */
+  --surface: #f7efd9;
+  --ink: #1a1510; /* warm near-black outline + text */
   --ink-soft: #4a423a;
 
-  /* the box palette */
-  --teal: #1c8b97;
-  --teal-deep: #0e5e69;
-  --orange: #ee882c;
-  --coral: #e0526a;
-  --yellow: #f4c43a;
-  --green: #57a23d;
-  --red: #c5402f;
-  --blue: #2f6fb2;
-  --purple: #6a4c9c;
+  /* the card palette — muted, earthy vintage offset-print inks */
+  --teal: #2c8590; /* petrol header, desaturated */
+  --teal-deep: #145159;
+  --orange: #c75c25; /* burnt rust (Count ground) */
+  --coral: #b8505e; /* dusty rose-brick — kept clear of the burnt orange */
+  --yellow: #d8a93a; /* mustard (scarves / braid) */
+  --green: #6f8a37; /* olive (Actress / Diplomat ground) */
+  --red: #9a3527; /* oxblood / brick (Gambler ground) */
+  --blue: #345f93; /* steel blue (the telegram "T" stamp) */
+  --purple: #6a5676; /* dusty mauve (Colonel ground) */
 
   --shadow: 4px 4px 0 var(--ink);
   --shadow-sm: 3px 3px 0 var(--ink);
@@ -38,15 +38,15 @@
   --ink: #f4e9cb; /* cream becomes the outline/text on dark */
   --ink-soft: #c8bda0;
 
-  --teal: #2aa6b3;
-  --teal-deep: #0e5e69;
-  --orange: #f2982f;
-  --coral: #ec6178;
-  --yellow: #f6cd4e;
-  --green: #6cbb4d;
-  --red: #db5142;
-  --blue: #4d8bd0;
-  --purple: #8a6bc0;
+  --teal: #36a0ac;
+  --teal-deep: #145159;
+  --orange: #d97138;
+  --coral: #cf6878;
+  --yellow: #e3bb52;
+  --green: #86a14a;
+  --red: #b8493a;
+  --blue: #5784bb;
+  --purple: #8a72a0;
 
   --shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
   --shadow-sm: 3px 3px 0 rgba(0, 0, 0, 0.6);
@@ -81,6 +81,28 @@ body {
   color: var(--ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+}
+
+/* kill the grey tap flash on mobile — .focusable rings and .press handle feedback */
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Horizontal page padding that also clears a landscape notch (needs
+   viewport-fit=cover). Replaces the usual px-3 / sm:px-4 on content
+   containers: the base value matches that padding, and env() takes over
+   only when a device inset is larger. */
+.safe-x {
+  padding-left: max(0.75rem, env(safe-area-inset-left));
+  padding-right: max(0.75rem, env(safe-area-inset-right));
+}
+@media (min-width: 640px) {
+  .safe-x {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
 }
 
 /* ---- comic primitives ---------------------------------------------- */

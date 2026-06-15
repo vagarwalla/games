@@ -27,26 +27,80 @@ export default function Home() {
     setTargetId(null);
   }
 
+  function scrollToTop() {
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  }
+
   return (
     <div className="min-h-screen">
       <Banner active="home" />
 
-      <main className="mx-auto max-w-5xl px-3 pb-16 sm:px-4">
+      <main className="safe-x mx-auto max-w-5xl pb-16">
+        {/*
+         * Mobile: a single column ordered controls -> clue -> targets, with the
+         * clue sticky just under the banner so it stays in view while you browse
+         * cards (no scrolling needed to read it). Desktop: two columns — controls
+         * and targets stacked on the left, the clue as a sticky right sidebar.
+         */}
         <div className="grid gap-6 pt-6 pb-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-8">
-          <div className="flex flex-col gap-6">
+          {/* controls */}
+          <div className="flex flex-col gap-6 lg:col-start-1 lg:row-start-1">
             <CaseSelector value={caseNumber} onChange={setCaseNumber} />
             <ActionTabs value={kind} onChange={handleKind} />
-            <TargetList
-              kind={kind}
-              targets={group.targets}
-              value={targetId}
-              onChange={setTargetId}
-            />
           </div>
 
-          {/* result — sticky on desktop, inline on mobile */}
-          <aside className="lg:sticky lg:top-20 lg:self-start">
-            <h2 className="kicker mb-2">The clue</h2>
+          {/*
+           * The clue. On mobile it's hidden until a target is chosen so the
+           * empty placeholder doesn't push the targets below the fold; once
+           * selected it pins below the banner. On desktop it's always the
+           * sticky right sidebar (placeholder included).
+           */}
+          <aside
+            className={`self-start lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:block lg:sticky lg:top-20 ${
+              targetId != null
+                ? "sticky top-14 z-20"
+                : "hidden"
+            }`}
+          >
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <h2 className="kicker">The clue</h2>
+              {targetId != null && (
+                <div className="flex items-center gap-1.5">
+                  {/* mobile-only: jump back up to the case/action controls */}
+                  <button
+                    type="button"
+                    onClick={scrollToTop}
+                    aria-label="Jump back to the top"
+                    className="focusable press font-label rounded-md px-2 py-1 text-[0.6rem] uppercase leading-none lg:hidden"
+                    style={{
+                      background: "var(--surface)",
+                      color: "var(--ink)",
+                      border: "2.5px solid var(--ink)",
+                      boxShadow: "var(--shadow-sm)",
+                    }}
+                  >
+                    ↑ Top
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTargetId(null)}
+                    aria-label="Close clue and return to the targets"
+                    className="focusable press font-label rounded-md px-2 py-1 text-[0.6rem] uppercase leading-none"
+                    style={{
+                      background: "var(--surface)",
+                      color: "var(--ink)",
+                      border: "2.5px solid var(--ink)",
+                    boxShadow: "var(--shadow-sm)",
+                  }}
+                  >
+                    ✕ Close
+                  </button>
+                </div>
+              )}
+            </div>
             {targetId != null ? (
               <ClueCard
                 clueNumber={clueNumber}
@@ -77,6 +131,16 @@ export default function Home() {
               </div>
             )}
           </aside>
+
+          {/* targets */}
+          <div className="lg:col-start-1 lg:row-start-2">
+            <TargetList
+              kind={kind}
+              targets={group.targets}
+              value={targetId}
+              onChange={setTargetId}
+            />
+          </div>
         </div>
       </main>
     </div>

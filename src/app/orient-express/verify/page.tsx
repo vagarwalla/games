@@ -24,7 +24,7 @@ export default function VerifyPage() {
     <div className="min-h-screen">
       <Banner active="verify" />
 
-      <main className="mx-auto flex max-w-5xl flex-col gap-10 px-3 pb-16 pt-5 sm:px-4">
+      <main className="safe-x mx-auto flex max-w-5xl flex-col gap-10 pb-16 pt-5">
         <section>
           <h1
             className="font-display text-3xl"

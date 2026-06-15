@@ -47,7 +47,25 @@ export default function Home() {
 
           {/* the clue */}
           <aside className="sticky top-14 z-20 self-start lg:top-20 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-            <h2 className="kicker mb-2">The clue</h2>
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <h2 className="kicker">The clue</h2>
+              {targetId != null && (
+                <button
+                  type="button"
+                  onClick={() => setTargetId(null)}
+                  aria-label="Close clue and return to the targets"
+                  className="focusable press font-label rounded-md px-2 py-1 text-[0.6rem] uppercase leading-none"
+                  style={{
+                    background: "var(--surface)",
+                    color: "var(--ink)",
+                    border: "2.5px solid var(--ink)",
+                    boxShadow: "var(--shadow-sm)",
+                  }}
+                >
+                  ✕ Close
+                </button>
+              )}
+            </div>
             {targetId != null ? (
               <ClueCard
                 clueNumber={clueNumber}

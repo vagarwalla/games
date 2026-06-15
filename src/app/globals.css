@@ -90,13 +90,19 @@ a,
   -webkit-tap-highlight-color: transparent;
 }
 
-/* respect notch / home-indicator safe areas (needs viewport-fit=cover) */
+/* Horizontal page padding that also clears a landscape notch (needs
+   viewport-fit=cover). Replaces the usual px-3 / sm:px-4 on content
+   containers: the base value matches that padding, and env() takes over
+   only when a device inset is larger. */
 .safe-x {
-  padding-left: max(var(--safe-x-base, 0px), env(safe-area-inset-left));
-  padding-right: max(var(--safe-x-base, 0px), env(safe-area-inset-right));
+  padding-left: max(0.75rem, env(safe-area-inset-left));
+  padding-right: max(0.75rem, env(safe-area-inset-right));
 }
-.safe-b {
-  padding-bottom: max(var(--safe-b-base, 0px), env(safe-area-inset-bottom));
+@media (min-width: 640px) {
+  .safe-x {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
 }
 
 /* ---- comic primitives ---------------------------------------------- */

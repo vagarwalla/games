@@ -4,7 +4,7 @@ import { ThemeToggle } from "./ThemeToggle";
 export function Banner({ active }: { active?: "home" | "verify" }) {
   return (
     <header
-      className="sticky top-0 z-30"
+      className="safe-x sticky top-0 z-30"
       style={{
         background: "var(--teal)",
         borderBottom: "3px solid var(--ink)",

@@ -7,7 +7,7 @@ export function ClueCard({
 }: {
   clueNumber: number | null;
   kind: ActionKind;
-  /** Still accepted by callers; the document letterhead supplies its own title. */
+  /** Still accepted by callers; each document supplies its own letterhead title. */
   actionLabel?: string;
 }) {
   if (clueNumber == null) {
@@ -184,7 +184,11 @@ function StatusTags({ clue }: { clue: Clue | undefined }) {
 
 type DossierKind = Exclude<ActionKind, "telegram">;
 
-/** Per-action document dressing: each clue arrives as a different in-universe paper. */
+/**
+ * Per-action document dressing. Each non-telegram clue arrives as a different
+ * in-universe paper: the suspect's spoken statement, the crew's confided
+ * account, or the detective's own field note from searching the scene.
+ */
 const DOSSIER: Record<
   DossierKind,
   {
@@ -192,12 +196,10 @@ const DOSSIER: Record<
     subtitle: string;
     glyph: string;
     accent: string;
-    /** 3 fixed metadata fields; the serial is appended as a 4th-style "No." */
-    meta: [string, string][];
-    /** how the clue text reads */
-    body: "statement" | "log" | "tag";
-    /** sign-off line under the clue */
-    sign: string;
+    /** in-universe setup line shown above the clue */
+    lead: string;
+    /** "quote" = spoken testimony in marks; "note" = observed prose */
+    body: "quote" | "note";
   }
 > = {
   "question-suspect": {
@@ -205,36 +207,24 @@ const DOSSIER: Record<
     subtitle: "Taken under caution · Pullman car",
     glyph: "?",
     accent: "var(--coral)",
-    meta: [
-      ["Oath", "Sworn"],
-      ["Car", "9"],
-    ],
-    body: "statement",
-    sign: "So deposed",
+    lead: "Pressed for answers, the suspect says",
+    body: "quote",
   },
   "question-crew": {
-    title: "Service Log",
+    title: "Crew's Account",
     subtitle: "Cie. Intl. des Wagons-Lits",
-    glyph: "§",
+    glyph: "✦",
     accent: "var(--purple)",
-    meta: [
-      ["Watch", "Night"],
-      ["Coach", "Bar"],
-    ],
-    body: "log",
-    sign: "Entered in the log",
+    lead: "A member of the crew confides",
+    body: "quote",
   },
   "search-area": {
-    title: "Evidence Tag",
-    subtitle: "Compagnie inventory office",
-    glyph: "✦",
+    title: "Field Note",
+    subtitle: "From the detective's notebook",
+    glyph: "⌕",
     accent: "var(--green)",
-    meta: [
-      ["Zone", "Cabine"],
-      ["Shelf", "B"],
-    ],
-    body: "tag",
-    sign: "Logged in evidence",
+    lead: "Searching the area, you find",
+    body: "note",
   },
 };
 
@@ -250,7 +240,6 @@ function DossierCard({
   pending: boolean;
 }) {
   const t = DOSSIER[kind];
-  const serial = String(clueNumber).padStart(3, "0");
 
   return (
     <article
@@ -270,7 +259,7 @@ function DossierCard({
       />
 
       {/* printed letterhead */}
-      <div className="flex items-center gap-2.5 px-3 pt-3 pb-2">
+      <div className="flex items-center gap-2.5 border-b-[3px] px-3 py-2.5" style={{ borderColor: "var(--ink)" }}>
         <Stamp glyph={t.glyph} bg={t.accent} />
         <span className="min-w-0 flex-1 leading-tight">
           <span className="font-label block text-xs uppercase sm:text-sm">
@@ -291,16 +280,6 @@ function DossierCard({
         </span>
       </div>
 
-      {/* metadata strip */}
-      <div
-        className="font-label grid grid-cols-3 border-y-[3px] text-[0.5rem] uppercase sm:text-[0.55rem]"
-        style={{ borderColor: "var(--ink)", color: "var(--ink-soft)" }}
-      >
-        <Meta label={t.meta[0][0]} value={t.meta[0][1]} />
-        <Meta label={t.meta[1][0]} value={t.meta[1][1]} border />
-        <Meta label="No." value={serial} border />
-      </div>
-
       {/* the document body */}
       <div className="px-4 pt-4 pb-4">
         {pending ? (
@@ -311,16 +290,15 @@ function DossierCard({
             Not yet transcribed from the booklet.
           </p>
         ) : (
-          <DossierBody body={t.body} text={clue!.text} accent={t.accent} />
-        )}
-
-        {!pending && (
-          <p
-            className="font-label mt-3 text-[0.55rem] uppercase tracking-wide"
-            style={{ color: t.accent }}
-          >
-            — {t.sign}
-          </p>
+          <>
+            <p
+              className="font-label mb-2 text-[0.55rem] uppercase tracking-wide"
+              style={{ color: t.accent }}
+            >
+              {t.lead}
+            </p>
+            <DossierBody body={t.body} text={clue!.text} accent={t.accent} />
+          </>
         )}
 
         <StatusTags clue={clue} />
@@ -335,49 +313,39 @@ function DossierBody({
   text,
   accent,
 }: {
-  body: "statement" | "log" | "tag";
+  body: "quote" | "note";
   text: string;
   accent: string;
 }) {
-  if (body === "statement") {
+  if (body === "quote") {
     return (
-      <p
-        className="font-body text-[0.98rem] italic leading-relaxed"
+      <blockquote
+        className="relative pl-7 text-[1.02rem] italic leading-relaxed"
         style={{ color: "var(--ink)" }}
       >
-        <span className="font-display not-italic" style={{ color: accent }}>
+        <span
+          aria-hidden="true"
+          className="font-display absolute left-0 top-0 not-italic leading-none"
+          style={{ color: accent, fontSize: "2.4rem", lineHeight: 0.8 }}
+        >
           “
         </span>
         {text}
-        <span className="font-display not-italic" style={{ color: accent }}>
-          ”
-        </span>
-      </p>
+      </blockquote>
     );
   }
-  if (body === "log") {
-    return (
-      <p
-        className="font-mono text-[0.9rem] leading-relaxed"
-        style={{ color: "var(--ink)" }}
-      >
-        <span className="opacity-50">21h40 — </span>
-        {text}
-      </p>
-    );
-  }
-  // tag
+  // note: the detective's observation, set like a ruled notebook line
   return (
     <p
-      className="font-mono text-[0.92rem] font-medium uppercase leading-relaxed tracking-wide"
-      style={{ color: "var(--ink)" }}
+      className="border-l-[3px] pl-3 text-[0.98rem] font-medium leading-relaxed"
+      style={{ color: "var(--ink)", borderColor: accent }}
     >
       {text}
     </p>
   );
 }
 
-/* a gold glyph stamped on a coloured square — the wax-seal of each document */
+/* a gold glyph stamped on a coloured square — the seal of each document */
 function Stamp({ glyph = "T", bg = "var(--blue)" }: { glyph?: string; bg?: string }) {
   return (
     <span

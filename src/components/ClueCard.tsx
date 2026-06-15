@@ -4,11 +4,11 @@ import type { ActionKind, Clue } from "@/lib/types";
 export function ClueCard({
   clueNumber,
   kind,
-  actionLabel,
 }: {
   clueNumber: number | null;
   kind: ActionKind;
-  actionLabel: string;
+  /** Still accepted by callers; each document supplies its own letterhead title. */
+  actionLabel?: string;
 }) {
   if (clueNumber == null) {
     return (
@@ -37,52 +37,12 @@ export function ClueCard({
   }
 
   return (
-    <article
-      key={clueNumber}
-      className="animate-pop overflow-hidden"
-      style={{
-        background: "var(--paper)",
-        border: "3px solid var(--ink)",
-        borderRadius: "var(--radius)",
-        boxShadow: "var(--shadow)",
-      }}
-    >
-      {/* cream label bar: title + circle number (no telegram stamp here) */}
-      <div className="label-bar flex items-center gap-2.5 px-3 py-2">
-        <span className="flex-1 text-xs leading-none sm:text-sm">
-          {actionLabel}
-        </span>
-        <span
-          className="font-display grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm"
-          style={{
-            background: "var(--ink)",
-            color: "var(--paper)",
-          }}
-        >
-          {clueNumber}
-        </span>
-      </div>
-
-      <div className="px-4 py-4">
-        {pending ? (
-          <p
-            className="text-sm font-semibold italic"
-            style={{ color: "var(--ink-soft)" }}
-          >
-            This clue has not been transcribed from the booklet yet.
-          </p>
-        ) : (
-          <p
-            className="text-[0.98rem] font-medium leading-relaxed"
-            style={{ color: "var(--ink)" }}
-          >
-            {clue.text}
-          </p>
-        )}
-
-        <StatusTags clue={clue} />
-      </div>
-    </article>
+    <DossierCard
+      kind={kind}
+      clueNumber={clueNumber}
+      clue={clue}
+      pending={pending}
+    />
   );
 }
 
@@ -118,7 +78,7 @@ function TelegramCard({
 
       {/* printed letterhead */}
       <div className="flex items-center gap-2.5 px-3 pt-3 pb-2">
-        <Stamp />
+        <Stamp glyph="T" bg="var(--blue)" />
         <span className="min-w-0 flex-1 leading-tight">
           <span className="font-label block text-xs uppercase sm:text-sm">
             Telegram
@@ -220,21 +180,205 @@ function StatusTags({ clue }: { clue: Clue | undefined }) {
   );
 }
 
-/* the gold "T" telegram stamp on a blue square */
-function Stamp() {
+/* ---- dossier (suspect / crew / search) ------------------------------ */
+
+type DossierKind = Exclude<ActionKind, "telegram">;
+
+/**
+ * Per-action document dressing. Each non-telegram clue arrives as a different
+ * in-universe paper: the suspect's spoken statement, the crew's confided
+ * account, or the detective's own field note from searching the scene.
+ */
+const DOSSIER: Record<
+  DossierKind,
+  {
+    title: string;
+    subtitle: string;
+    glyph: string;
+    accent: string;
+    /** in-universe setup line shown above the clue */
+    lead: string;
+    /** "quote" = spoken testimony in marks; "note" = observed prose */
+    body: "quote" | "note";
+  }
+> = {
+  "question-suspect": {
+    title: "Witness Statement",
+    subtitle: "Taken under caution · Pullman car",
+    glyph: "?",
+    accent: "var(--coral)",
+    lead: "Pressed for answers, the suspect says",
+    body: "quote",
+  },
+  "question-crew": {
+    title: "Crew's Account",
+    subtitle: "Cie. Intl. des Wagons-Lits",
+    glyph: "✦",
+    accent: "var(--purple)",
+    meta: [
+      ["Post", "Steward"],
+      ["Coach", "Dining"],
+    ],
+    lead: "A member of the crew confides",
+    body: "quote",
+  },
+  "search-area": {
+    title: "Field Note",
+    subtitle: "From the detective's notebook",
+    glyph: "⌕",
+    accent: "var(--green)",
+    meta: [
+      ["Where", "Cabine"],
+      ["Hour", "Dusk"],
+    ],
+    lead: "Searching the area, you find",
+    body: "note",
+  },
+};
+
+function DossierCard({
+  kind,
+  clueNumber,
+  clue,
+  pending,
+}: {
+  kind: DossierKind;
+  clueNumber: number;
+  clue: Clue | undefined;
+  pending: boolean;
+}) {
+  const t = DOSSIER[kind];
+  const serial = String(clueNumber).padStart(3, "0");
+
+  return (
+    <article
+      key={clueNumber}
+      className="animate-pop overflow-hidden"
+      style={{
+        background: "var(--surface)",
+        border: "3px solid var(--ink)",
+        borderRadius: "var(--radius)",
+        boxShadow: "var(--shadow)",
+      }}
+    >
+      {/* coloured kicker band so each document is recognisable at a glance */}
+      <div
+        style={{ height: 7, background: t.accent, borderBottom: "3px solid var(--ink)" }}
+        aria-hidden="true"
+      />
+
+      {/* printed letterhead */}
+      <div className="flex items-center gap-2.5 px-3 pt-3 pb-2">
+        <Stamp glyph={t.glyph} bg={t.accent} />
+        <span className="min-w-0 flex-1 leading-tight">
+          <span className="font-label block text-xs uppercase sm:text-sm">
+            {t.title}
+          </span>
+          <span
+            className="font-label block text-[0.5rem] uppercase tracking-wide sm:text-[0.55rem]"
+            style={{ color: "var(--ink-soft)" }}
+          >
+            {t.subtitle}
+          </span>
+        </span>
+        <span
+          className="font-display grid h-9 w-9 shrink-0 place-items-center rounded-full text-sm"
+          style={{ background: t.accent, color: "var(--paper)", border: "2px solid var(--ink)" }}
+        >
+          {clueNumber}
+        </span>
+      </div>
+
+      {/* metadata strip */}
+      <div
+        className="font-label grid grid-cols-3 border-y-[3px] text-[0.5rem] uppercase sm:text-[0.55rem]"
+        style={{ borderColor: "var(--ink)", color: "var(--ink-soft)" }}
+      >
+        <Meta label={t.meta[0][0]} value={t.meta[0][1]} />
+        <Meta label={t.meta[1][0]} value={t.meta[1][1]} border />
+        <Meta label="No." value={serial} border />
+      </div>
+
+      {/* the document body */}
+      <div className="px-4 pt-4 pb-4">
+        {pending ? (
+          <p
+            className="text-sm font-semibold italic"
+            style={{ color: "var(--ink-soft)" }}
+          >
+            Not yet transcribed from the booklet.
+          </p>
+        ) : (
+          <>
+            <p
+              className="font-label mb-2 text-[0.55rem] uppercase tracking-wide"
+              style={{ color: t.accent }}
+            >
+              {t.lead}
+            </p>
+            <DossierBody body={t.body} text={clue!.text} accent={t.accent} />
+          </>
+        )}
+
+        <StatusTags clue={clue} />
+      </div>
+    </article>
+  );
+}
+
+/** Renders the clue text in the voice of each document type. */
+function DossierBody({
+  body,
+  text,
+  accent,
+}: {
+  body: "quote" | "note";
+  text: string;
+  accent: string;
+}) {
+  if (body === "quote") {
+    return (
+      <blockquote
+        className="relative pl-7 text-[1.02rem] italic leading-relaxed"
+        style={{ color: "var(--ink)" }}
+      >
+        <span
+          aria-hidden="true"
+          className="font-display absolute left-0 top-0 not-italic leading-none"
+          style={{ color: accent, fontSize: "2.4rem", lineHeight: 0.8 }}
+        >
+          “
+        </span>
+        {text}
+      </blockquote>
+    );
+  }
+  // note: the detective's observation, set like a ruled notebook line
+  return (
+    <p
+      className="border-l-[3px] pl-3 text-[0.98rem] font-medium leading-relaxed"
+      style={{ color: "var(--ink)", borderColor: accent }}
+    >
+      {text}
+    </p>
+  );
+}
+
+/* a gold glyph stamped on a coloured square — the seal of each document */
+function Stamp({ glyph = "T", bg = "var(--blue)" }: { glyph?: string; bg?: string }) {
   return (
     <span
       aria-hidden="true"
       className="font-display grid h-9 w-9 shrink-0 place-items-center text-lg leading-none"
       style={{
-        background: "var(--blue)",
+        background: bg,
         color: "var(--yellow)",
         border: "2.5px solid var(--ink)",
         borderRadius: "4px",
         textShadow: "1px 1px 0 var(--ink)",
       }}
     >
-      T
+      {glyph}
     </span>
   );
 }

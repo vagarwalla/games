@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { clueByNumber } from "@/lib/clues";
 import type { ActionKind, Clue } from "@/lib/types";
 
@@ -10,6 +13,14 @@ export function ClueCard({
   /** Still accepted by callers; each document supplies its own letterhead title. */
   actionLabel?: string;
 }) {
+  // The card starts sealed (showing its cover); a tap flips it to reveal the
+  // clue, and a second tap flips it back. Reset to the cover whenever the
+  // player picks a different target or action.
+  const [flipped, setFlipped] = useState(false);
+  useEffect(() => {
+    setFlipped(false);
+  }, [clueNumber, kind]);
+
   if (clueNumber == null) {
     return (
       <div
@@ -30,19 +41,174 @@ export function ClueCard({
   const pending = !clue || clue.missing || !clue.text;
   const isTelegram = kind === "telegram";
 
-  if (isTelegram) {
-    return (
-      <TelegramCard clueNumber={clueNumber} clue={clue} pending={pending} />
-    );
-  }
-
-  return (
+  const back = isTelegram ? (
+    <TelegramCard clueNumber={clueNumber} clue={clue} pending={pending} />
+  ) : (
     <DossierCard
       kind={kind}
       clueNumber={clueNumber}
       clue={clue}
       pending={pending}
     />
+  );
+
+  return (
+    <FlipCard
+      flipped={flipped}
+      onToggle={() => setFlipped((f) => !f)}
+      front={<ClueCover kind={kind} clueNumber={clueNumber} />}
+      back={back}
+    />
+  );
+}
+
+/* ---- flip shell ----------------------------------------------------- */
+
+/**
+ * A 3D flip card: the sealed cover on the front, the clue document on the
+ * back. The whole surface is a toggle — tap (or Enter/Space) to flip either
+ * way. Both faces are stacked in the same grid cell so the shell sizes to the
+ * taller face and the flip stays in place.
+ */
+function FlipCard({
+  flipped,
+  onToggle,
+  front,
+  back,
+}: {
+  flipped: boolean;
+  onToggle: () => void;
+  front: React.ReactNode;
+  back: React.ReactNode;
+}) {
+  return (
+    <div className="flip-card animate-pop">
+      <div
+        className={`flip-inner${flipped ? " is-flipped" : ""}`}
+        role="button"
+        tabIndex={0}
+        aria-expanded={flipped}
+        aria-label={
+          flipped
+            ? "Clue revealed. Tap to flip the card back."
+            : "Sealed clue. Tap to flip the card and reveal it."
+        }
+        onClick={onToggle}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onToggle();
+          }
+        }}
+        style={{ cursor: "pointer" }}
+      >
+        <div className="flip-face">{front}</div>
+        <div className="flip-face flip-face--back">
+          <div className="flex h-full flex-col">
+            {back}
+            <p
+              className="font-label mt-2 text-center text-[0.5rem] uppercase tracking-wide"
+              style={{ color: "var(--ink-soft)" }}
+            >
+              ↩ Tap to flip back
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---- cover (front face) --------------------------------------------- */
+
+/** Per-action cover dressing for the sealed front of the flip card. */
+const COVER: Record<
+  ActionKind,
+  { title: string; subtitle: string; glyph: string; accent: string }
+> = {
+  telegram: {
+    title: "Telegram",
+    subtitle: "Via Orient Express · Wagons-Lits",
+    glyph: "T",
+    accent: "var(--blue)",
+  },
+  "question-suspect": {
+    title: "Witness Statement",
+    subtitle: "Taken under caution",
+    glyph: "?",
+    accent: "var(--coral)",
+  },
+  "question-crew": {
+    title: "Crew's Account",
+    subtitle: "Cie. Intl. des Wagons-Lits",
+    glyph: "✦",
+    accent: "var(--purple)",
+  },
+  "search-area": {
+    title: "Field Note",
+    subtitle: "From the detective's notebook",
+    glyph: "⌕",
+    accent: "var(--green)",
+  },
+};
+
+function ClueCover({
+  kind,
+  clueNumber,
+}: {
+  kind: ActionKind;
+  clueNumber: number;
+}) {
+  const c = COVER[kind];
+  return (
+    <div
+      className="flex h-full flex-col overflow-hidden"
+      style={{
+        background: "var(--surface)",
+        border: "3px solid var(--ink)",
+        borderRadius: "var(--radius)",
+        boxShadow: "var(--shadow)",
+      }}
+    >
+      {/* coloured kicker band, matching the document it conceals */}
+      <div
+        style={{ height: 7, background: c.accent, borderBottom: "3px solid var(--ink)" }}
+        aria-hidden="true"
+      />
+
+      <div className="flex flex-1 flex-col items-center justify-center gap-2.5 px-5 py-9 text-center">
+        <span
+          className="font-label text-[0.5rem] uppercase tracking-wide"
+          style={{ color: "var(--ink-soft)" }}
+        >
+          Sealed · No. {String(clueNumber).padStart(3, "0")}
+        </span>
+
+        <Stamp glyph={c.glyph} bg={c.accent} large />
+
+        <span className="font-display text-xl leading-tight" style={{ color: "var(--ink)" }}>
+          {c.title}
+        </span>
+        <span
+          className="font-label text-[0.5rem] uppercase tracking-wide"
+          style={{ color: "var(--ink-soft)" }}
+        >
+          {c.subtitle}
+        </span>
+
+        <span
+          className="font-label mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[0.6rem] uppercase"
+          style={{
+            background: c.accent,
+            color: "#fffdf6",
+            border: "2px solid var(--ink)",
+            boxShadow: "var(--shadow-sm)",
+          }}
+        >
+          Tap to reveal ⟳
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -65,7 +231,7 @@ function TelegramCard({
   return (
     <article
       key={clueNumber}
-      className="animate-pop overflow-hidden"
+      className="overflow-hidden"
       style={{
         background: "#fbf4df" /* telegram form: a paler, yellowed paper */,
         border: "3px solid var(--ink)",
@@ -244,7 +410,7 @@ function DossierCard({
   return (
     <article
       key={clueNumber}
-      className="animate-pop overflow-hidden"
+      className="overflow-hidden"
       style={{
         background: "var(--surface)",
         border: "3px solid var(--ink)",
@@ -346,16 +512,27 @@ function DossierBody({
 }
 
 /* a gold glyph stamped on a coloured square — the seal of each document */
-function Stamp({ glyph = "T", bg = "var(--blue)" }: { glyph?: string; bg?: string }) {
+function Stamp({
+  glyph = "T",
+  bg = "var(--blue)",
+  large = false,
+}: {
+  glyph?: string;
+  bg?: string;
+  /** Bigger seal used on the sealed cover face. */
+  large?: boolean;
+}) {
   return (
     <span
       aria-hidden="true"
-      className="font-display grid h-9 w-9 shrink-0 place-items-center text-lg leading-none"
+      className={`font-display grid shrink-0 place-items-center leading-none ${
+        large ? "h-16 w-16 text-3xl" : "h-9 w-9 text-lg"
+      }`}
       style={{
         background: bg,
         color: "var(--yellow)",
-        border: "2.5px solid var(--ink)",
-        borderRadius: "4px",
+        border: large ? "3px solid var(--ink)" : "2.5px solid var(--ink)",
+        borderRadius: large ? "6px" : "4px",
         textShadow: "1px 1px 0 var(--ink)",
       }}
     >

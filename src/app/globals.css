@@ -184,6 +184,37 @@ a,
   outline-offset: 2px;
 }
 
+/* ---- flip card ------------------------------------------------------ */
+
+/* A clue presented as a flippable card: the sealed cover on the front, the
+   document on the back. Both faces share one grid cell so the shell sizes to
+   the taller face; rotating the inner swaps which face is shown. */
+.flip-card {
+  perspective: 1600px;
+}
+.flip-inner {
+  display: grid;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.34, 1.3, 0.5, 1);
+}
+.flip-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  grid-area: 1 / 1;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.flip-face--back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-inner {
+    transition: none;
+  }
+}
+
 /* ---- motion --------------------------------------------------------- */
 
 @keyframes rise-in {

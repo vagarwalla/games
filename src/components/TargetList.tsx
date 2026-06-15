@@ -20,7 +20,10 @@ export function TargetList({
   return (
     <section>
       <h2 className="kicker mb-2">Who / where</h2>
-      <ul key={kind} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <ul
+        key={kind}
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+      >
         {targets.map((t, i) => {
           const selected = value === t.id;
           return (
@@ -33,40 +36,35 @@ export function TargetList({
                 type="button"
                 onClick={() => onChange(t.id)}
                 aria-pressed={selected}
-                className="focusable press flex w-full items-center gap-3 rounded-lg p-1.5 pr-3 text-left"
+                aria-label={t.label}
+                title={t.label}
+                className="focusable press relative block w-full overflow-hidden rounded-lg"
                 style={{
-                  background: selected ? color : "var(--surface)",
-                  color: selected ? "#fffdf6" : "var(--ink)",
+                  aspectRatio: "591 / 864",
                   border: "3px solid var(--ink)",
-                  boxShadow: selected ? "var(--shadow)" : "var(--shadow-sm)",
+                  borderRadius: "var(--radius)",
+                  background: "var(--surface)",
+                  boxShadow: selected
+                    ? `0 0 0 4px ${color}, var(--shadow)`
+                    : "var(--shadow-sm)",
                 }}
               >
                 {t.image ? (
-                  <span
-                    className="relative block h-12 w-10 shrink-0 overflow-hidden rounded-md"
-                    style={{ border: "2.5px solid var(--ink)", background: "#fff" }}
-                  >
-                    <Image
-                      src={t.image}
-                      alt=""
-                      fill
-                      sizes="40px"
-                      className="object-cover"
-                    />
-                  </span>
+                  <Image
+                    src={t.image}
+                    alt={t.label}
+                    fill
+                    sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 160px"
+                    className="object-cover"
+                  />
                 ) : (
                   <span
-                    className="font-display grid h-12 w-10 shrink-0 place-items-center rounded-md text-sm"
-                    style={{
-                      background: selected ? "var(--surface)" : color,
-                      color: selected ? "var(--ink)" : "#fffdf6",
-                      border: "2.5px solid var(--ink)",
-                    }}
+                    className="font-display grid h-full w-full place-items-center text-2xl"
+                    style={{ color: "var(--ink)" }}
                   >
-                    {i + 1}
+                    {t.label}
                   </span>
                 )}
-                <span className="flex-1 text-sm font-bold">{t.label}</span>
               </button>
             </li>
           );

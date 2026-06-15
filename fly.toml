@@ -1,5 +1,5 @@
 # Fly.io config for games.vaidehiagarwalla.com (featured game: Orient Express).
-app = "vagarwalla-games"
+app = "games-vaidehiagarwalla"
 primary_region = "sjc"
 
 [build]

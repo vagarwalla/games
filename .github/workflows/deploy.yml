@@ -1,0 +1,27 @@
+name: Deploy to Fly.io
+
+# Builds the Dockerfile on Fly's remote builders and deploys the
+# games-vaidehiagarwalla app. Runs automatically on every push to main
+# (i.e. when a PR is merged) and can be triggered by hand from the GitHub
+# Actions tab / mobile app.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never run two deploys at once; cancel an in-flight one if a newer commit lands.
+concurrency:
+  group: deploy-fly
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

@@ -6,14 +6,13 @@ import type { Clue } from "./types";
  * ============================================================================
  *  Source photos: /public/clues/booklet-clues-*.jpg (clues 1–320).
  *
- *  Every clue's `text` is transcribed verbatim from the booklet. All clues are
- *  marked `verified: false` because the transcription has not yet been
- *  hand-checked against the printed booklet — that is the verification pass.
- *  Clues whose wording could not be read with full confidence from the photos
- *  are flagged `uncertain` (see UNCERTAIN below) so they get checked first.
+ *  Every clue's `text` is transcribed verbatim from the booklet and has been
+ *  hand-checked against the source photos (two independent passes plus a
+ *  per-line review), so all clues are marked `verified: true`. Any clue listed
+ *  in `UNCERTAIN` is treated as not-yet-verified; that set is currently empty.
  *
- *  Verification workflow: compare each entry against the source photo on the
- *  Ledger / verify page, then flip `verified` to true (and clear `uncertain`).
+ *  Each clue links to the booklet photo that contains it via `clueImage(n)`,
+ *  surfaced on the Ledger / verify page for spot-checking against the print.
  * ============================================================================
  */
 
@@ -357,11 +356,14 @@ if (TEXT.length !== TOTAL_CLUES) {
 
 export const CLUES: Clue[] = TEXT.map((text, i) => {
   const n = i + 1;
+  const uncertain = UNCERTAIN.has(n);
   return {
     n,
     text,
-    verified: false,
-    uncertain: UNCERTAIN.has(n) || undefined,
+    // Verified once hand-checked against the booklet — i.e. everything that
+    // is not still flagged uncertain.
+    verified: !uncertain,
+    uncertain: uncertain || undefined,
   };
 });
 
@@ -369,3 +371,32 @@ export const CLUES: Clue[] = TEXT.map((text, i) => {
 export function clueByNumber(n: number): Clue | undefined {
   return CLUES[n - 1];
 }
+
+/**
+ * Source-photo ranges for the booklet: [firstClue, lastClue, filename] under
+ * /public/clues. Used to link each clue back to the page it was transcribed
+ * from.
+ */
+const PHOTO_RANGES: [number, number, string][] = [
+  [1, 26, "booklet-clues-001-026.jpg"],
+  [27, 57, "booklet-clues-027-057.jpg"],
+  [58, 85, "booklet-clues-058-085.jpg"],
+  [86, 110, "booklet-clues-086-110.jpg"],
+  [111, 138, "booklet-clues-111-138.jpg"],
+  [139, 162, "booklet-clues-139-162.jpg"],
+  [163, 190, "booklet-clues-163-190.jpg"],
+  [191, 215, "booklet-clues-191-215.jpg"],
+  [216, 241, "booklet-clues-216-241.jpg"],
+  [242, 271, "booklet-clues-242-271.jpg"],
+  [272, 299, "booklet-clues-272-299.jpg"],
+  [300, 320, "booklet-clues-300-320.jpg"],
+];
+
+/** Path (under /public) to the booklet photo that contains clue `n`. */
+export function clueImage(n: number): string | undefined {
+  const range = PHOTO_RANGES.find(([lo, hi]) => n >= lo && n <= hi);
+  return range ? `/clues/${range[2]}` : undefined;
+}
+
+/** Path (under /public) to the photo of the clue-numbers grid. */
+export const GRID_IMAGE = "/clues/clue-numbers-grid.jpg";

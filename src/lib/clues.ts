@@ -20,13 +20,12 @@ import type { Clue } from "./types";
 export const TOTAL_CLUES = 320;
 
 /**
- * Clues whose transcription is shaky in the photos and needs a careful
- * double-check against the printed booklet:
- *   144 — "oddly enough for someone in this profession": this/his unclear.
- *   305 — one word is illegible in the photo ("…pinpoint where the murder
- *         occurred").
+ * Every clue's `text` is transcribed verbatim from the booklet and was
+ * cross-checked against the photos in a second independent pass. No clues
+ * remain flagged uncertain; `UNCERTAIN` is kept (empty) so future shaky
+ * readings can be flagged again.
  */
-const UNCERTAIN = new Set<number>([144, 305]);
+const UNCERTAIN = new Set<number>([]);
 
 /** Booklet text for clues 1–320, in order (index 0 = clue 1). */
 const TEXT: string[] = [
@@ -173,7 +172,7 @@ const TEXT: string[] = [
   "The Cook knows a lot about coins; the Porter knows a lot about jewels. The victim's name was Walter de Faulter. His body was found in Second Class.",
   "If the Count is guilty, the motive was espionage, jealousy, or money; the Count is an expert in exotic poisons.",
   "If the murder occurred between 5 and 7 o'clock, then at least one of the following suspects—the Actress, Entrepreneur, Fortuneteller, or Heiress—must have done it.",
-  "If the Diplomat is guilty, the motive was espionage or money; the Diplomat, oddly enough for someone in this profession, does not speak French.",
+  "If the Diplomat is guilty, the motive was espionage or money; the Diplomat, oddly enough for someone in his profession, does not speak French.",
   "None of the men are experts in coins.",
   "The Heiress was in the drawing room from 6 o'clock until 8. The Actress was there from 7 until 8.",
   "The motive could not have been blackmail, insanity, or jealousy.",
@@ -334,7 +333,7 @@ const TEXT: string[] = [
   "The motive was not money or jealousy.",
   "The list of jewels the victim was carrying indicates that the killer took only the very best of the jewels, and so must have been an expert on jewels.",
   "If the murder took place after 7 o'clock, the Actress could not have done it.",
-  "Searching both First Class and the Smoking Lounge Area will pinpoint where the murder occurred. The motive was not blackmail.",
+  "Searching both First Class and the Smoking Lounge Area will pinpoint the time where the murder occurred. The motive was not blackmail.",
   "The cause of death was an exotic poison, which must have been mixed with some food the victim ate; the killer—or at least one of the killers, if there were more than one—had to be an expert in exotic poisons to use it.",
   "From 5 o'clock until 6, the Baroness, Diplomat, and Gambler were all in the dining room.",
   "The Gambler and Heiress are both guilty.",

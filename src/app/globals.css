@@ -67,7 +67,7 @@
   --color-yellow: var(--yellow);
   --color-green: var(--green);
   --color-blue: var(--blue);
-  --font-display: var(--ff-display), "Paytone One", system-ui, sans-serif;
+  --font-display: var(--ff-display), "Alfa Slab One", Georgia, serif;
   --font-label: var(--ff-label), "Bungee", system-ui, sans-serif;
   --font-body: var(--ff-body), "DM Sans", system-ui, sans-serif;
 }

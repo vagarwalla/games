@@ -13,6 +13,8 @@ export interface Target {
   id: string;
   /** Display label shown in the TargetList. */
   label: string;
+  /** Path to the card art for this target (under /public), if any. */
+  image?: string;
 }
 
 /** One action group: a tab in the UI plus the targets it offers. */

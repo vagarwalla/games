@@ -32,32 +32,7 @@ export default function Home() {
       <Banner active="home" />
 
       <main className="mx-auto max-w-5xl px-3 pb-16 sm:px-4">
-        {/* marquee hero */}
-        <section
-          className="mt-4 rounded-2xl px-4 py-6 text-center sm:py-8"
-          style={{
-            background: "var(--teal)",
-            border: "3px solid var(--ink)",
-            boxShadow: "var(--shadow)",
-          }}
-        >
-          <h1
-            className="font-display leading-[0.95] tracking-wide"
-            style={{ color: "var(--paper)", textShadow: "3px 3px 0 var(--ink)" }}
-          >
-            <span className="block text-4xl sm:text-6xl">ORIENT</span>
-            <span className="block text-4xl sm:text-6xl">EXPRESS</span>
-          </h1>
-          <p
-            className="mx-auto mt-3 max-w-md text-sm font-semibold"
-            style={{ color: "var(--paper)" }}
-          >
-            Skip the booklet shuffle. Pick the case, say what happened, choose
-            the target — the clue is pulled for you.
-          </p>
-        </section>
-
-        <div className="grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-8">
+        <div className="grid gap-6 pt-6 pb-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-8">
           <div className="flex flex-col gap-6">
             <CaseSelector value={caseNumber} onChange={setCaseNumber} />
             <ActionTabs value={kind} onChange={handleKind} />

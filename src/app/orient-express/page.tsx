@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Banner } from "@/components/Banner";
 import { CaseSelector } from "@/components/CaseSelector";
 import { ActionTabs } from "@/components/ActionTabs";
@@ -28,26 +28,29 @@ export default function Home() {
     setTargetId(null);
   }
 
-  // On mobile the clue renders below the target grid; bring it into view on select.
-  // On desktop (lg+) the clue sits in a sticky sidebar that's already visible.
-  function handleTarget(next: string) {
-    setTargetId(next);
-    if (typeof window === "undefined") return;
+  // On mobile the clue renders below the target grid; bring it into view once it
+  // has selected. On desktop (lg+) the clue sits in an already-visible sticky
+  // sidebar, so the scroll is skipped. Runs after commit (effect) and waits a
+  // frame for the swapped clue content to lay out; cleanup cancels a pending
+  // scroll if the target changes again first.
+  useEffect(() => {
+    if (targetId == null) return;
     if (window.matchMedia("(min-width: 1024px)").matches) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    requestAnimationFrame(() => {
+    const frame = requestAnimationFrame(() => {
       resultRef.current?.scrollIntoView({
         behavior: reduce ? "auto" : "smooth",
         block: "start",
       });
     });
-  }
+    return () => cancelAnimationFrame(frame);
+  }, [targetId]);
 
   return (
     <div className="min-h-screen">
       <Banner active="home" />
 
-      <main className="safe-x safe-b mx-auto max-w-5xl px-3 pb-16 sm:px-4">
+      <main className="safe-x mx-auto max-w-5xl pb-16">
         <div className="grid gap-6 pt-6 pb-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-8">
           <div className="flex flex-col gap-6">
             <CaseSelector value={caseNumber} onChange={setCaseNumber} />
@@ -56,7 +59,7 @@ export default function Home() {
               kind={kind}
               targets={group.targets}
               value={targetId}
-              onChange={handleTarget}
+              onChange={setTargetId}
             />
           </div>
 

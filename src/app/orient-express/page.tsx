@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Banner } from "@/components/Banner";
 import { CaseSelector } from "@/components/CaseSelector";
 import { ActionTabs } from "@/components/ActionTabs";
@@ -13,7 +13,6 @@ export default function Home() {
   const [caseNumber, setCaseNumber] = useState(1);
   const [kind, setKind] = useState<ActionKind>(ACTION_GROUPS[0].kind);
   const [targetId, setTargetId] = useState<string | null>(null);
-  const resultRef = useRef<HTMLElement>(null);
 
   const group = useMemo(
     () => ACTION_GROUPS.find((g) => g.kind === kind)!,
@@ -28,46 +27,26 @@ export default function Home() {
     setTargetId(null);
   }
 
-  // On mobile the clue renders below the target grid; bring it into view once it
-  // has selected. On desktop (lg+) the clue sits in an already-visible sticky
-  // sidebar, so the scroll is skipped. Runs after commit (effect) and waits a
-  // frame for the swapped clue content to lay out; cleanup cancels a pending
-  // scroll if the target changes again first.
-  useEffect(() => {
-    if (targetId == null) return;
-    if (window.matchMedia("(min-width: 1024px)").matches) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const frame = requestAnimationFrame(() => {
-      resultRef.current?.scrollIntoView({
-        behavior: reduce ? "auto" : "smooth",
-        block: "start",
-      });
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [targetId]);
-
   return (
     <div className="min-h-screen">
       <Banner active="home" />
 
       <main className="safe-x mx-auto max-w-5xl pb-16">
+        {/*
+         * Mobile: a single column ordered controls -> clue -> targets, with the
+         * clue sticky just under the banner so it stays in view while you browse
+         * cards (no scrolling needed to read it). Desktop: two columns — controls
+         * and targets stacked on the left, the clue as a sticky right sidebar.
+         */}
         <div className="grid gap-6 pt-6 pb-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:gap-8">
-          <div className="flex flex-col gap-6">
+          {/* controls */}
+          <div className="flex flex-col gap-6 lg:col-start-1 lg:row-start-1">
             <CaseSelector value={caseNumber} onChange={setCaseNumber} />
             <ActionTabs value={kind} onChange={handleKind} />
-            <TargetList
-              kind={kind}
-              targets={group.targets}
-              value={targetId}
-              onChange={setTargetId}
-            />
           </div>
 
-          {/* result — sticky on desktop, inline on mobile */}
-          <aside
-            ref={resultRef}
-            className="scroll-mt-20 lg:sticky lg:top-20 lg:self-start"
-          >
+          {/* the clue */}
+          <aside className="sticky top-14 z-20 self-start lg:top-20 lg:col-start-2 lg:row-span-2 lg:row-start-1">
             <h2 className="kicker mb-2">The clue</h2>
             {targetId != null ? (
               <ClueCard
@@ -99,6 +78,16 @@ export default function Home() {
               </div>
             )}
           </aside>
+
+          {/* targets */}
+          <div className="lg:col-start-1 lg:row-start-2">
+            <TargetList
+              kind={kind}
+              targets={group.targets}
+              value={targetId}
+              onChange={setTargetId}
+            />
+          </div>
         </div>
       </main>
     </div>

@@ -24,9 +24,9 @@ const body = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Orient Express — Clue Lookup",
+  title: "Games",
   description:
-    "A fast clue lookup for Murder on the Orient Express: pick a case, an action, and a target to pull the clue.",
+    "Small board-game tools: an Orient Express clue lookup, and a secondhand deal finder.",
 };
 
 export const viewport: Viewport = {
